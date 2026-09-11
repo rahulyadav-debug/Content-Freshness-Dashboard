@@ -1,0 +1,27 @@
+{
+  "name": "content-freshness-dashboard",
+  "version": "1.0.0",
+  "description": "SEO Analytics Dashboard - Analyze content freshness and GA4 traffic data",
+  "main": "index.html",
+  "scripts": {
+    "start": "open index.html",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "seo",
+    "analytics",
+    "content-freshness",
+    "ga4",
+    "dashboard"
+  ],
+  "author": "Rahul Yadav",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rahulyadav-debug/Content-Freshness-Dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rahulyadav-debug/Content-Freshness-Dashboard/issues"
+  },
+  "homepage": "https://github.com/rahulyadav-debug/Content-Freshness-Dashboard#readme"
+}

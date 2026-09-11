@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Intelligence · Pristyn Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root {
+  --bg:       #F2F0EB;
+  --surface:  #FFFFFF;
+  --s2:       #F8F7F4;
+  --border:   #E3DDD6;
+  --border2:  #C9C2B9;
+  --ink:      #111111;
+  --muted:    #6B6560;
+  --subtle:   #A89E95;
+  --hdr:      #0C0E18;
+  --green:    #15803D; --green-lt:#DCFCE7;
+  --amber:    #B45309; --amber-lt:#FEF3C7;
+  --red:      #B91C1C; --red-lt:#FEE2E2;
+  --blue:     #1D4ED8; --blue-lt:#DBEAFE;
+  --violet:   #6D28D9; --violet-lt:#EDE9FE;
+  --f: 'Inter', system-ui, sans-serif;
+  --fm: 'JetBrains Mono', monospace;
+  --r: 8px;
+  --sh: 0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+  --sh2: 0 8px 28px rgba(0,0,0,.11);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* ─── HEADER ─── */
+.hdr{background:var(--hdr);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;position:sticky;top:0;z-index:300;}
+.hdr-l{display:flex;align-items:center;gap:10px;}
+.hdr-logo{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,#6D28D9 0%,#1D4ED8 100%);display:flex;align-items:center;justify-content:center;font-size:15px;}
+.hdr-name{color:#fff;font-weight:700;font-size:14px;letter-spacing:-.01em;}
+.hdr-sub{color:#4B5563;font-size:11px;font-family:var(--fm);}
+.hdr-pills{display:flex;gap:8px;}
+.hpill{display:flex;align-items:center;gap:7px;background:#161925;border-radius:20px;padding:5px 14px;}
+.hpill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.hpill .pv{color:#fff;font-size:14px;font-weight:700;font-family:var(--fm);}
+.hpill .pl{color:#4B5563;font-size:10px;text-transform:uppercase;letter-spacing:.05em;}
+
+/* ─── PAGE ─── */
+.page{max-width:1320px;margin:0 auto;padding:32px 32px 64px;}
+
+/* ─── CONNECT PANEL ─── */
+.connect-panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  box-shadow:var(--sh);overflow:hidden;margin-bottom:28px;
+}
+.cp-head{
+  background:linear-gradient(135deg,#0C0E18 0%,#1a1f35 100%);
+  padding:28px 32px;display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.cp-head-text h2{color:#fff;font-size:18px;font-weight:700;margin-bottom:4px;}
+.cp-head-text p{color:#9CA3AF;font-size:13px;line-height:1.6;}
+.steps-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border);}
+.cp-step{padding:22px 24px;border-right:1px solid var(--border);position:relative;}
+.cp-step:last-child{border-right:none;}
+.cp-step.done{background:#F0FDF8;}
+.step-num{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--bg);border:1.5px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--muted);
+  float:left;margin-right:10px;margin-top:1px;flex-shrink:0;
+  transition:all .2s;
+}
+.cp-step.done .step-num{background:var(--green);border-color:var(--green);color:#fff;}
+.step-head{display:flex;align-items:flex-start;margin-bottom:10px;}
+.step-info .st{font-size:13px;font-weight:600;margin-bottom:2px;}
+.step-info .sd{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* Client ID input */
+.cid-row{display:flex;gap:8px;margin-top:10px;}
+.inp{
+  flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:6px;
+  font-family:var(--f);font-size:13px;color:var(--ink);outline:none;
+  transition:border-color .15s;background:var(--s2);
+}
+.inp:focus{border-color:var(--blue);background:#fff;}
+.inp.sm{font-size:12px;font-family:var(--fm);}
+.btn{
+  padding:9px 16px;border:none;border-radius:6px;
+  font-family:var(--f);font-size:12.5px;font-weight:600;
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.btn-ink{background:var(--ink);color:#fff;}
+.btn-ink:hover{background:#2d2d2d;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#166534;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{background:#1e3fa8;}
+
+/* Google sign-in button */
+.google-btn{
+  display:flex;align-items:center;gap:10px;
+  background:#fff;border:1.5px solid #dadce0;border-radius:6px;
+  padding:9px 16px;cursor:pointer;font-family:var(--f);font-size:13px;
+  font-weight:500;color:#3c4043;transition:box-shadow .15s,border-color .15s;
+  width:100%;justify-content:center;margin-top:10px;
+}
+.google-btn:hover{box-shadow:0 2px 6px rgba(0,0,0,.12);border-color:#aaa;}
+.google-btn:disabled{opacity:.5;cursor:not-allowed;}
+.g-icon{width:18px;height:18px;flex-shrink:0;}
+
+/* Account chip */
+.account-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--green-lt);border:1px solid #86EFAC;border-radius:20px;
+  padding:5px 12px;font-size:12px;font-weight:500;color:var(--green);
+  margin-top:10px;
+}
+
+/* Property row */
+.prop-row{display:flex;gap:8px;margin-top:10px;align-items:flex-start;}
+.prop-help{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;}
+.prop-help a{color:var(--blue);text-decoration:none;}
+
+/* Status banner */
+.status-bar{
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+  border-radius:6px;margin-top:12px;font-size:12.5px;
+}
+.status-bar.loading{background:var(--blue-lt);color:var(--blue);}
+.status-bar.success{background:var(--green-lt);color:var(--green);}
+.status-bar.error  {background:var(--red-lt);color:var(--red);}
+.spinner{width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ─── UPLOAD CARDS ─── */
+.uploads{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
+.ucard{
+  background:var(--surface);border:1.5px dashed var(--border2);border-radius:var(--r);
+  padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;
+  transition:all .2s;
+}
+.ucard:hover{border-color:var(--blue);background:#F6F9FF;}
+.ucard.loaded{border-style:solid;border-color:var(--green);background:#F0FDF6;}
+.ucard-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+}
+.ucard.c1 .ucard-icon{background:var(--violet-lt);}
+.ucard.c2 .ucard-icon{background:var(--blue-lt);}
+.ucard.loaded .ucard-icon{background:var(--green-lt);}
+.ucard-info .ut{font-size:13px;font-weight:600;margin-bottom:2px;}
+.ucard-info .uh{font-size:11.5px;color:var(--muted);font-family:var(--fm);}
+.ucard-info .uh.ok{color:var(--green);font-weight:500;}
+.ubtn{
+  margin-left:auto;background:var(--s2);border:1px solid var(--border);
+  border-radius:6px;padding:7px 13px;font-size:12px;font-weight:600;
+  font-family:var(--f);cursor:pointer;flex-shrink:0;color:var(--ink);
+  transition:all .15s;
+}
+.ubtn:hover{background:var(--border);}
+.ucard.loaded .ubtn{background:var(--green-lt);border-color:#86EFAC;color:var(--green);}
+
+/* ─── SECTION LABEL ─── */
+.slabel{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);margin-bottom:10px;}
+
+/* ─── PRIORITY MATRIX ─── */
+.matrix-header{margin-bottom:12px;}
+.matrix-header h3{font-size:17px;font-weight:700;margin-bottom:3px;}
+.matrix-header p{font-size:13px;color:var(--muted);}
+.matrix{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
+.mq{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);
+  cursor:pointer;transition:transform .15s,box-shadow .15s;
+  border-top:3px solid transparent;
+}
+.mq:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.mq.act{border-top-color:var(--red);}
+.mq.pro{border-top-color:var(--green);}
+.mq.que{border-top-color:var(--amber);}
+.mq.mon{border-top-color:var(--subtle);}
+.mq-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;margin-bottom:12px;}
+.act .mq-tag{background:var(--red-lt);color:var(--red);}
+.pro .mq-tag{background:var(--green-lt);color:var(--green);}
+.que .mq-tag{background:var(--amber-lt);color:var(--amber);}
+.mon .mq-tag{background:var(--bg);color:var(--subtle);border:1px solid var(--border);}
+.mq-n{font-size:48px;font-weight:800;font-family:var(--fm);line-height:1;margin-bottom:6px;}
+.act .mq-n{color:var(--red);}
+.pro .mq-n{color:var(--green);}
+.que .mq-n{color:var(--amber);}
+.mon .mq-n{color:var(--subtle);}
+.mq-sub{font-size:12.5px;color:var(--muted);line-height:1.5;}
+.mq-peek{margin-top:10px;font-size:11px;font-family:var(--fm);color:var(--subtle);border-top:1px solid var(--border);padding-top:8px;white-space:pre-line;line-height:1.7;}
+
+/* ─── STAT CARDS ─── */
+.statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px;}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);}
+.sc .sv{font-size:30px;font-weight:800;font-family:var(--fm);line-height:1;}
+.sc .sl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;}
+.sc .sp{height:3px;border-radius:2px;background:var(--border);margin-top:12px;overflow:hidden;}
+.sc .sf{height:3px;border-radius:2px;transition:width .7s ease;}
+.s7 .sv,.s7 .sf{color:var(--amber);background:var(--amber);}
+.s30 .sv,.s30 .sf{color:var(--amber);background:var(--amber);}
+.s90 .sv,.s90 .sf{color:var(--red);background:var(--red);}
+.s120 .sv,.s120 .sf{color:var(--red);background:var(--red);}
+.tstat{border-top:3px solid var(--blue)!important;}
+.tstat .sv{color:var(--blue)!important;}
+
+/* ─── TABLE ─── */
+.tbl-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;}
+.tbl-bar{padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.srch{flex:1;min-width:160px;display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:7px 11px;}
+.srch input{border:none;outline:none;font-family:var(--f);font-size:13px;color:var(--ink);width:100%;background:transparent;}
+.srch input::placeholder{color:var(--subtle);}
+.chips{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{font-size:11.5px;font-weight:500;padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.chip:hover{color:var(--ink);border-color:var(--border2);}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.chip.r.on{background:var(--red);border-color:var(--red);}
+.chip.a.on{background:var(--amber);border-color:var(--amber);}
+.chip.b.on{background:var(--blue);border-color:var(--blue);}
+.srt-sel{font-family:var(--f);font-size:12px;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);margin-left:auto;cursor:pointer;outline:none;}
+
+.tbl-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:960px;}
+th{padding:10px 14px;text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--s2);border-bottom:1.5px solid var(--border);white-space:nowrap;}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--s2);}
+
+.td-n{font-size:11px;color:var(--subtle);font-family:var(--fm);width:32px;}
+.td-url{max-width:280px;}
+.td-url a{display:block;font-family:var(--fm);font-size:11.5px;color:var(--ink);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;}
+.td-url a:hover{color:var(--blue);text-decoration:underline;}
+.td-path{font-size:10.5px;color:var(--subtle);font-family:var(--fm);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.td-date{font-family:var(--fm);font-size:12px;color:var(--muted);white-space:nowrap;}
+.td-r{text-align:right;font-family:var(--fm);font-size:13px;font-weight:500;}
+
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap;}
+.pg{background:var(--green-lt);color:var(--green);}
+.pa{background:var(--amber-lt);color:var(--amber);}
+.pr{background:var(--red-lt);color:var(--red);}
+.px{background:var(--bg);color:var(--subtle);border:1px solid var(--border);}
+
+.pbadge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.03em;}
+.ph{background:#FEE2E2;color:#991B1B;}
+.pm{background:#FEF3C7;color:#78350F;}
+.pl{background:var(--bg);color:var(--subtle);}
+
+.bar-cell{display:flex;align-items:center;gap:6px;min-width:90px;}
+.bar-bg{flex:1;height:5px;background:var(--bg);border-radius:3px;overflow:hidden;}
+.bar-fg{height:5px;border-radius:3px;background:var(--blue);transition:width .4s;}
+.td-mth{font-family:var(--fm);font-size:10px;color:var(--subtle);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+.tbl-foot{padding:10px 16px;border-top:1px solid var(--border);background:var(--s2);display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--muted);font-family:var(--fm);}
+
+/* ─── EMPTY ─── */
+.empty{text-align:center;padding:60px 20px;display:none;}
+.empty .ei{font-size:44px;margin-bottom:14px;}
+.empty h3{font-size:16px;font-weight:700;margin-bottom:6px;}
+.empty p{font-size:13px;color:var(--muted);line-height:1.7;}
+
+footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-family:var(--fm);}
+
+/* ─── ONBOARDING NOTE ─── */
+.onboard-note{
+  background:var(--violet-lt);border:1px solid #C4B5FD;border-radius:6px;
+  padding:10px 14px;font-size:12px;color:var(--violet);line-height:1.6;margin-top:10px;
+}
+.onboard-note a{color:var(--violet);font-weight:600;}
+
+@media (max-width: 768px) {
+  .steps-row { grid-template-columns: 1fr; }
+  .cp-step { border-right: none; border-bottom: 1px solid var(--border); }
+  .cp-step:last-child { border-bottom: none; }
+  .statrow { grid-template-columns: 1fr 1fr; }
+  .matrix { grid-template-columns: 1fr; }
+  .page { padding: 16px 16px 40px; }
+  .hdr { padding: 0 16px; }
+  .hdr-pills { gap: 4px; }
+  .hpill { padding: 4px 10px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header class="hdr">
+  <div class="hdr-l">
+    <div class="hdr-logo">🎯</div>
+    <div>
+      <div class="hdr-name">Content Intelligence</div>
+      <div class="hdr-sub">SEO Dashboard</div>
+    </div>
+  </div>
+  <div class="hdr-pills">
+    <div class="hpill"><div class="dot" style="background:#22C55E;" id="h-dot"></div><span class="pv" id="h-total">—</span><span class="pl">URLs</span></div>
+    <div class="hpill"><div class="dot" style="background:#EF4444;"></div><span class="pv" id="h-actnow">—</span><span class="pl">Act Now</span></div>
+    <div class="hpill"><div class="dot" style="background:#3B82F6;"></div><span class="pv" id="h-sess">—</span><span class="pl">Sessions</span></div>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- ─── CONNECT PANEL ─── -->
+  <div class="connect-panel" id="connectPanel">
+    <div class="cp-head">
+      <div class="cp-head-text">
+        <h2>Connect your data</h2>
+        <p>Sign in with Google to pull GA4 traffic · Upload your URL list · Optionally upload freshness data</p>
+      </div>
+    </div>
+
+    <div class="steps-row">
+
+      <!-- STEP 1 — Google Sign-in -->
+      <div class="cp-step" id="step1">
+        <div class="step-head">
+          <div class="step-num" id="sn1">1</div>
+          <div class="step-info">
+            <div class="st">Sign in with Google</div>
+            <div class="sd">Connect the Google account that has Viewer access to your GA4 property.</div>
+          </div>
+        </div>
+
+        <!-- Client ID input -->
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:5px;">Your OAuth Client ID</div>
+          <div class="cid-row">
+            <input class="inp sm" id="clientIdInput" placeholder="xxxxx.apps.googleusercontent.com" type="text">
+            <button class="btn btn-ink" onclick="initOAuth()">Set</button>
+          </div>
+          <div class="onboard-note" id="cidNote">
+            First time? <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Open Google Cloud Console</a> →
+            Create Credentials → OAuth 2.0 Client ID → Web application →
+            Add <strong>http://localhost:8080</strong> as Authorized JavaScript origin → Copy Client ID above.
+            <br>Only takes 2 minutes. Done once.
+          </div>
+        </div>
+
+        <button class="google-btn" id="googleBtn" onclick="signInWithGoogle()" disabled>
+          <svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Sign in with Google
+        </button>
+
+        <div id="acctChip" style="display:none;"></div>
+        <div id="step1Status"></div>
+      </div>
+
+      <!-- STEP 2 — Property ID + Fetch -->
+      <div class="cp-step" id="step2">
+        <div class="step-head">
+          <div class="step-num" id="sn2">2</div>
+          <div class="step-info">
+            <div class="st">Pull GA4 Traffic</div>
+            <div class="sd">Enter your GA4 Property ID and fetch the last 90 days of traffic for your URLs.</div>
+          </div>
+        </div>
+        <div style="font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:5px;">GA4 Property ID</div>
+        <div class="prop-row">
+          <input class="inp" id="propInput" placeholder="e.g. 123456789" type="text" disabled>
+          <button class="btn btn-blue" id="fetchBtn" onclick="fetchGA4()" disabled>Fetch Traffic →</button>
+        </div>
+        <div class="prop-help">Find in GA4 → Admin → Property Settings → Property ID <a href="https://analytics.google.com" target="_blank">(open GA4 ↗)</a></div>
+        <div id="step2Status"></div>
+      </div>
+
+      <!-- STEP 3 — URL + Freshness -->
+      <div class="cp-step" id="step3">
+        <div class="step-head">
+          <div class="step-num" id="sn3">3</div>
+          <div class="step-info">
+            <div class="st">Upload Files</div>
+            <div class="sd">Upload your URL list. Optionally add freshness data from <span style="font-family:var(--fm);font-size:11px;">extract_dates.py</span>.</div>
+          </div>
+        </div>
+        <div class="ucard c1" id="ucard-urls" style="margin-bottom:8px;" onclick="document.getElementById('inp-urls').click()">
+          <div class="ucard-icon" id="ui-urls">📂</div>
+          <div class="ucard-info">
+            <div class="ut">URL List</div>
+            <div class="uh" id="uh-urls">urls.txt or urls.csv</div>
+          </div>
+          <button class="ubtn" onclick="event.stopPropagation();document.getElementById('inp-urls').click()">Upload</button>
+        </div>
+        <input type="file" id="inp-urls" accept=".txt,.csv" style="display:none">
+
+        <div class="ucard c2" id="ucard-fresh" onclick="document.getElementById('inp-fresh').click()">
+          <div class="ucard-icon" id="ui-fresh">📄</div>
+          <div class="ucard-info">
+            <div class="ut">Freshness Data <span style="font-size:10px;color:var(--muted);font-weight:400;">(optional)</span></div>
+            <div class="uh" id="uh-fresh">results.csv from extract_dates.py</div>
+          </div>
+          <button class="ubtn" onclick="event.stopPropagation();document.getElementById('inp-fresh').click()">Upload</button>
+        </div>
+        <input type="file" id="inp-fresh" accept=".csv" style="display:none">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── DASHBOARD ─── -->
+  <div id="dash" style="display:none;">
+
+    <!-- Priority Matrix -->
+    <div class="slabel">Priority Matrix</div>
+    <div class="matrix-header">
+      <h3>Content Action Map</h3>
+      <p>High traffic + stale content = Act Now. Click any quadrant to filter the table.</p>
+    </div>
+    <div class="matrix">
+      <div class="mq act" onclick="setFilter('actnow')">
+        <div class="mq-tag">🔴 Act Now</div>
+        <div class="mq-n" id="mq-a">0</div>
+        <div class="mq-sub"><strong>High traffic · Stale 90+ days</strong><br>Highest SEO risk. Update immediately.</div>
+        <div class="mq-peek" id="pk-a"></div>
+      </div>
+      <div class="mq pro" onclick="setFilter('all')">
+        <div class="mq-tag">🟢 Protect</div>
+        <div class="mq-n" id="mq-p">0</div>
+        <div class="mq-sub"><strong>High traffic · Fresh content</strong><br>Performing well. Keep monitoring.</div>
+        <div class="mq-peek" id="pk-p"></div>
+      </div>
+      <div class="mq que" onclick="setFilter('90')">
+        <div class="mq-tag">🟡 Queue</div>
+        <div class="mq-n" id="mq-q">0</div>
+        <div class="mq-sub"><strong>Low traffic · Stale content</strong><br>Update after Act Now pages.</div>
+        <div class="mq-peek" id="pk-q"></div>
+      </div>
+      <div class="mq mon" onclick="setFilter('all')">
+        <div class="mq-tag">⚪ Monitor</div>
+        <div class="mq-n" id="mq-m">0</div>
+        <div class="mq-sub"><strong>Low traffic · Fresh content</strong><br>Fine for now. Check growth.</div>
+        <div class="mq-peek" id="pk-m"></div>
+      </div>
+    </div>
+
+    <!-- Freshness Stats -->
+    <div class="slabel">Staleness Breakdown</div>
+    <div class="statrow">
+      <div class="sc s7">  <div class="sv" id="sv7">0</div>  <div class="sl">Stale 7+ days</div>  <div class="sp"><div class="sf" id="sf7"  style="width:0%"></div></div></div>
+      <div class="sc s30"> <div class="sv" id="sv30">0</div> <div class="sl">Stale 30+ days</div> <div class="sp"><div class="sf" id="sf30" style="width:0%"></div></div></div>
+      <div class="sc s90"> <div class="sv" id="sv90">0</div> <div class="sl">Stale 90+ days</div> <div class="sp"><div class="sf" id="sf90" style="width:0%"></div></div></div>
+      <div class="sc s120"><div class="sv" id="sv120">0</div><div class="sl">Stale 120+ days</div><div class="sp"><div class="sf" id="sf120"style="width:0%"></div></div></div>
+    </div>
+
+    <!-- Traffic Stats -->
+    <div id="tr-sec" style="display:none;">
+      <div class="slabel">GA4 Traffic — Last 90 Days</div>
+      <div class="statrow">
+        <div class="sc tstat"><div class="sv" id="tv-s">0</div><div class="sl">Total Sessions</div></div>
+        <div class="sc tstat"><div class="sv" id="tv-p">0</div><div class="sl">Total Pageviews</div></div>
+        <div class="sc tstat"><div class="sv" id="tv-u">0</div><div class="sl">Total Users</div></div>
+        <div class="sc tstat"><div class="sv" style="color:var(--subtle)!important;" id="tv-z">0</div><div class="sl">Zero Traffic</div></div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="slabel">All URLs</div>
+    <div class="tbl-card">
+      <div class="tbl-bar">
+        <div class="srch">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="srch" placeholder="Search URLs…">
+        </div>
+        <div class="chips" id="chips">
+          <span class="chip on"  data-f="all">All</span>
+          <span class="chip r"   data-f="actnow">🔴 Act Now</span>
+          <span class="chip a"   data-f="30">30+ days</span>
+          <span class="chip r"   data-f="90">90+ days</span>
+          <span class="chip b"   data-f="zero">Zero Traffic</span>
+          <span class="chip"     data-f="unknown">Unknown Date</span>
+        </div>
+        <select class="srt-sel" id="srt">
+          <option value="priority">↓ Priority</option>
+          <option value="days_d">↓ Most Stale</option>
+          <option value="days_a">↑ Freshest</option>
+          <option value="sess_d">↓ Sessions</option>
+          <option value="sess_a">↑ Sessions</option>
+        </select>
+      </div>
+      <div class="tbl-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>URL</th><th>Updated</th><th>Age</th>
+              <th>Freshness</th><th>Priority</th>
+              <th style="text-align:right">Sessions</th>
+              <th style="text-align:right">Pageviews</th>
+              <th>Traffic</th><th>Method</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="tbl-foot">
+        <span id="row-count">—</span>
+        <span id="run-time">—</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="empty" id="empty">
+    <div class="ei">📋</div>
+    <h3>Upload your URL list to get started</h3>
+    <p>Sign in with Google and upload your URLs in Step 3.</p>
+  </div>
+
+</div>
+
+<footer>Content Intelligence · SEO Analytics Dashboard · All data stays local in your browser</footer>
+
+<script>
+// ─── STATE ───
+let accessToken = null;
+let urlList  = [];
+let freshMap = {};
+let ga4Map   = {};
+let curFilter = 'all';
+let curSearch = '';
+const DAYS_BACK = 90;
+
+// ─── OAUTH ───
+let tokenClient = null;
+
+function initOAuth() {
+  const cid = document.getElementById('clientIdInput').value.trim();
+  if(!cid || !cid.includes('.apps.googleusercontent')) {
+    alert('Please paste a valid OAuth Client ID (ends with .apps.googleusercontent.com)');
+    return;
+  }
+  try {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: cid,
+      scope: 'https://www.googleapis.com/auth/analytics.readonly',
+      callback: onToken,
+      error_callback: onAuthError,
+    });
+    document.getElementById('googleBtn').disabled = false;
+    document.getElementById('cidNote').style.display = 'none';
+    setStatus('step1Status', 'info', 'Client ID saved. Click "Sign in with Google" below.');
+  } catch(e) {
+    setStatus('step1Status', 'error', 'Invalid Client ID: ' + e.message);
+  }
+}
+
+function signInWithGoogle() {
+  if(!tokenClient) {
+    setStatus('step1Status','error','Please set your Client ID first.');
+    return;
+  }
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+function onToken(resp) {
+  if(resp.error) { onAuthError(resp); return; }
+  accessToken = resp.access_token;
+
+  // Get user info
+  fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: 'Bearer ' + accessToken }
+  }).then(r => r.json()).then(info => {
+    const chip = document.getElementById('acctChip');
+    chip.innerHTML = `<div class="account-chip">✅ Signed in as ${info.email}</div>`;
+    chip.style.display = 'block';
+  });
+
+  markDone(1);
+  document.getElementById('propInput').disabled = false;
+  document.getElementById('fetchBtn').disabled  = false;
+  setStatus('step1Status','success','Connected! Now enter your Property ID in Step 2.');
+}
+
+function onAuthError(e) {
+  setStatus('step1Status','error','Auth error: ' + (e.message||e.error||'Please check your Client ID and try again.'));
+}
+
+// ─── GA4 FETCH ───
+async function fetchGA4() {
+  const propId = document.getElementById('propInput').value.trim();
+  if(!propId || isNaN(propId)) {
+    setStatus('step2Status','error','Please enter a valid Property ID (numbers only).');
+    return;
+  }
+  if(!accessToken) {
+    setStatus('step2Status','error','Please sign in with Google first.');
+    return;
+  }
+  if(!urlList.length) {
+    setStatus('step2Status','error','Please upload your URL list in Step 3 first.');
+    return;
+  }
+
+  document.getElementById('fetchBtn').disabled = true;
+  setStatus('step2Status','loading',`Fetching last ${DAYS_BACK} days for ${urlList.length} URLs…`);
+
+  try {
+    ga4Map = {};
+    const paths = urlList.map(urlToPath);
+    const BATCH = 50;
+
+    for(let i=0; i < paths.length; i += BATCH) {
+      const batch = paths.slice(i, i+BATCH);
+      setStatus('step2Status','loading',`Fetching batch ${Math.floor(i/BATCH)+1} / ${Math.ceil(paths.length/BATCH)}…`);
+
+      const filterExpressions = batch.map(p => ({
+        filter:{ fieldName:'pagePath', stringFilter:{ matchType:'EXACT', value:p, caseSensitive:false }}
+      }));
+
+      const body = {
+        dateRanges:[{ startDate: DAYS_BACK+'daysAgo', endDate:'today' }],
+        dimensions:[{ name:'pagePath' }],
+        metrics:[{ name:'sessions' },{ name:'screenPageViews' },{ name:'activeUsers' }],
+        dimensionFilter: batch.length===1
+          ? { filter:{ fieldName:'pagePath', stringFilter:{ matchType:'EXACT', value:batch[0], caseSensitive:false }}}
+          : { orGroup:{ expressions: filterExpressions }},
+        limit:10000
+      };
+
+      const res = await fetch(
+        `https://analyticsdata.googleapis.com/v1beta/properties/${propId}:runReport`,
+        { method:'POST', headers:{ 'Authorization':'Bearer '+accessToken, 'Content-Type':'application/json' }, body:JSON.stringify(body) }
+      );
+
+      if(!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error?.message || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      (data.rows||[]).forEach(row => {
+        const p = row.dimensionValues[0].value;
+        ga4Map[p] = {
+          sessions:  parseInt(row.metricValues[0].value)||0,
+          pageviews: parseInt(row.metricValues[1].value)||0,
+          users:     parseInt(row.metricValues[2].value)||0
+        };
+      });
+    }
+
+    // Map paths back to URLs
+    const ga4ByUrl = {};
+    urlList.forEach(url => {
+      const p = urlToPath(url);
+      ga4ByUrl[url] = ga4Map[p] || { sessions:0, pageviews:0, users:0 };
+    });
+    ga4Map = ga4ByUrl;
+
+    const found = Object.values(ga4Map).filter(r=>r.sessions>0).length;
+    setStatus('step2Status','success',`✓ Fetched! ${found} / ${urlList.length} URLs had traffic.`);
+    markDone(2);
+    document.getElementById('tr-sec').style.display = 'block';
+    renderAll();
+  } catch(e) {
+    setStatus('step2Status','error','GA4 error: ' + e.message);
+  }
+
+  document.getElementById('fetchBtn').disabled = false;
+}
+
+function urlToPath(url) {
+  try {
+    const u = new URL(url);
+    return u.pathname + (u.search||'');
+  } catch(e) {
+    return url;
+  }
+}
+
+// ─── FILE UPLOADS ───
+document.getElementById('inp-urls').addEventListener('change', async e => {
+  const file = e.target.files[0]; if(!file) return;
+  const text = await file.text();
+  if(file.name.endsWith('.csv')) {
+    const lines = text.trim().split('\n');
+    const h = lines[0].split(',').map(x=>x.trim().toLowerCase());
+    const ui = h.indexOf('url');
+    urlList = lines.slice(1).map(l => {
+      const c = l.split(',');
+      return (ui>=0?c[ui]:c[0]).trim().replace(/"/g,'');
+    }).filter(u=>u.startsWith('http'));
+  } else {
+    urlList = text.split('\n').map(l=>l.trim()).filter(u=>u.startsWith('http'));
+  }
+  document.getElementById('uh-urls').textContent = `✓ ${urlList.length} URLs · ${file.name}`;
+  document.getElementById('uh-urls').className   = 'uh ok';
+  document.getElementById('ui-urls').textContent = '✅';
+  document.getElementById('ucard-urls').classList.add('loaded');
+  markDone(3);
+  tryRender();
+});
+
+document.getElementById('inp-fresh').addEventListener('change', async e => {
+  const file = e.target.files[0]; if(!file) return;
+  freshMap = parseCSV(await file.text());
+  document.getElementById('uh-fresh').textContent = `✓ ${Object.keys(freshMap).length} URLs · ${file.name}`;
+  document.getElementById('uh-fresh').className   = 'uh ok';
+  document.getElementById('ui-fresh').textContent = '✅';
+  document.getElementById('ucard-fresh').classList.add('loaded');
+  tryRender();
+});
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n').filter(l=>l.trim());
+  if(lines.length<2) return {};
+  const hdr = lines[0].split(',').map(h=>h.trim().replace(/"/g,'').toLowerCase());
+  const out = {};
+  for(let i=1;i<lines.length;i++) {
+    const cols = csvSplit(lines[i]);
+    const row  = {};
+    hdr.forEach((h,j)=>{ row[h]=(cols[j]||'').trim().replace(/"/g,''); });
+    const url=row['url']; if(!url||!url.startsWith('http')) continue;
+    const d=row['days_old'];
+    out[url]={ date:row['date']||'', days:(d!==''&&!isNaN(parseInt(d)))?parseInt(d):null, method:row['method']||'' };
+  }
+  return out;
+}
+
+function csvSplit(l) {
+  const r=[];let c='';let q=false;
+  for(const ch of l){if(ch==='"'){q=!q;}else if(ch===','&&!q){r.push(c);c='';}else{c+=ch;}}
+  r.push(c);return r;
+}
+
+// ─── RENDER ───
+function tryRender() {
+  if(!urlList.length && !Object.keys(freshMap).length && !Object.keys(ga4Map).length) return;
+  document.getElementById('dash').style.display  = 'block';
+  document.getElementById('empty').style.display = 'none';
+  renderAll();
+}
+
+function getRow(url) {
+  const f = freshMap[url] || { date:'', days:null, method:'' };
+  const t = ga4Map[url]   || { sessions:0, pageviews:0, users:0 };
+  return { url, ...f, ...t };
+}
+
+function pScore(r, med) {
+  const stale = r.days!==null ? Math.min(r.days/365,1) : 0.5;
+  const traf  = med>0 ? Math.min(r.sessions/(med*2),1) : 0;
+  return stale*.6 + traf*.4;
+}
+
+function renderAll() {
+  const master = urlList.length>0 ? urlList : Array.from(new Set([...Object.keys(freshMap),...Object.keys(ga4Map)]));
+  const rows   = master.map(getRow);
+  const hasTr  = Object.keys(ga4Map).length>0;
+  const sv     = rows.map(r=>r.sessions).sort((a,b)=>a-b);
+  const med    = sv[Math.floor(sv.length/2)]||0;
+
+  // Header
+  const actNow = rows.filter(r=>r.sessions>med&&(r.days===null||r.days>=90));
+  document.getElementById('h-total').textContent  = rows.length;
+  document.getElementById('h-actnow').textContent = actNow.length;
+  document.getElementById('h-sess').textContent   = hasTr ? fmt(rows.reduce((a,r)=>a+r.sessions,0)) : '—';
+  document.getElementById('run-time').textContent = 'Updated: '+new Date().toLocaleString('en-IN',{dateStyle:'short',timeStyle:'short'});
+
+  // Staleness
+  const tot = rows.length;
+  [7,30,90,120].forEach(d=>{
+    const n=rows.filter(r=>r.days!==null&&r.days>=d).length;
+    document.getElementById('sv'+d).textContent=n;
+    document.getElementById('sf'+d).style.width=tot?(n/tot*100)+'%':'0%';
+  });
+
+  // Traffic
+  if(hasTr){
+    document.getElementById('tv-s').textContent=fmt(rows.reduce((a,r)=>a+r.sessions,0));
+    document.getElementById('tv-p').textContent=fmt(rows.reduce((a,r)=>a+r.pageviews,0));
+    document.getElementById('tv-u').textContent=fmt(rows.reduce((a,r)=>a+r.users,0));
+    document.getElementById('tv-z').textContent=rows.filter(r=>r.sessions===0).length;
+  }
+
+  // Matrix
+  const protect=rows.filter(r=>r.sessions>med&&r.days!==null&&r.days<90);
+  const queue  =rows.filter(r=>r.sessions<=med&&(r.days===null||r.days>=90));
+  const monitor=rows.filter(r=>r.sessions<=med&&r.days!==null&&r.days<90);
+  document.getElementById('mq-a').textContent=actNow.length;
+  document.getElementById('mq-p').textContent=protect.length;
+  document.getElementById('mq-q').textContent=queue.length;
+  document.getElementById('mq-m').textContent=monitor.length;
+  peek('pk-a',actNow); peek('pk-p',protect); peek('pk-q',queue); peek('pk-m',monitor);
+
+  applySort(master);
+}
+
+function peek(id,arr) {
+  const el=document.getElementById(id);
+  if(!arr.length){el.textContent='';return;}
+  el.textContent=arr.slice(0,2).map(r=>'↗ '+(r.url.replace(/https?:\/\/(www\.)?/,'').split('/')[0])).join('\n');
+}
+
+// ─── FILTER / SORT ───
+document.getElementById('srch').addEventListener('input', e=>{
+  curSearch=e.target.value.toLowerCase();
+  refreshTable();
+});
+document.getElementById('chips').addEventListener('click', e=>{
+  if(!e.target.classList.contains('chip'))return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  e.target.classList.add('on');
+  curFilter=e.target.dataset.f;
+  refreshTable();
+});
+document.getElementById('srt').addEventListener('change', refreshTable);
+
+window.setFilter = function(f) {
+  curFilter=f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  const t=document.querySelector(`[data-f="${f}"]`);
+  if(t)t.classList.add('on');
+  refreshTable();
+  document.querySelector('.tbl-card').scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+function refreshTable() {
+  const master = urlList.length>0 ? urlList : Array.from(new Set([...Object.keys(freshMap),...Object.keys(ga4Map)]));
+  applySort(master);
+}
+
+function applySort(master) {
+  const sv=master.map(u=>(ga4Map[u]||{sessions:0}).sessions).sort((a,b)=>a-b);
+  const med=sv[Math.floor(sv.length/2)]||0;
+  let rows=master.map(getRow);
+
+  if(curSearch) rows=rows.filter(r=>r.url.toLowerCase().includes(curSearch));
+  if(curFilter==='actnow')  rows=rows.filter(r=>r.sessions>med&&(r.days===null||r.days>=90));
+  else if(curFilter==='30') rows=rows.filter(r=>r.days!==null&&r.days>=30);
+  else if(curFilter==='90') rows=rows.filter(r=>r.days!==null&&r.days>=90);
+  else if(curFilter==='zero')    rows=rows.filter(r=>r.sessions===0);
+  else if(curFilter==='unknown') rows=rows.filter(r=>r.days===null);
+
+  const srt=document.getElementById('srt').value;
+  rows.sort((a,b)=>{
+    if(srt==='priority') return pScore(b,med)-pScore(a,med);
+    if(srt==='days_d'){if(a.days===null)return 1;if(b.days===null)return-1;return b.days-a.days;}
+    if(srt==='days_a'){if(a.days===null)return 1;if(b.days===null)return-1;return a.days-b.days;}
+    if(srt==='sess_d') return b.sessions-a.sessions;
+    if(srt==='sess_a') return a.sessions-b.sessions;
+    return 0;
+  });
+  renderTable(rows, med);
+}
+
+function renderTable(rows, med) {
+  const hasTr=Object.keys(ga4Map).length>0;
+  const maxS=Math.max(1,...rows.map(r=>r.sessions));
+  const tbody=document.getElementById('tbody');
+  tbody.innerHTML='';
+  if(!rows.length){
+    tbody.innerHTML=`<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--subtle);font-family:var(--fm);">No URLs match this filter.</td></tr>`;
+    document.getElementById('row-count').textContent='0 rows'; return;
+  }
+  rows.forEach((r,i)=>{
+    const{pill,pc}=pillFor(r.days);
+    const ps=pScore(r,med);
+    const plb=ps>.55?'High':ps>.3?'Medium':'Low';
+    const pcl=ps>.55?'ph':ps>.3?'pm':'pl';
+    const bp=Math.round(r.sessions/maxS*100);
+    const path=r.url.replace(/https?:\/\/(www\.)?/,'').split(/[?#]/)[0]||'/';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td class="td-n">${i+1}</td>
+      <td class="td-url">
+        <a href="${r.url}" target="_blank" title="${r.url}">${new URL(r.url).hostname}</a>
+        <span class="td-path">${path}</span>
+      </td>
+      <td class="td-date">${r.date||'—'}</td>
+      <td class="td-r">${r.days!==null?r.days+'d':'—'}</td>
+      <td><span class="pill ${pc}">${pill}</span></td>
+      <td><span class="pbadge ${pcl}">${plb}</span></td>
+      <td class="td-r">${hasTr?fmt(r.sessions):'—'}</td>
+      <td class="td-r">${hasTr?fmt(r.pageviews):'—'}</td>
+      <td>${hasTr?`<div class="bar-cell"><div class="bar-bg"><div class="bar-fg" style="width:${bp}%"></div></div></div>`:'—'}</td>
+      <td class="td-mth" title="${r.method}">${r.method||'—'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('row-count').textContent=`${rows.length} of ${urlList.length||Object.keys({...freshMap,...ga4Map}).length} URLs`;
+}
+
+function pillFor(d) {
+  if(d===null) return{pill:'Unknown',     pc:'px'};
+  if(d>=120)   return{pill:d+'d · Critical',pc:'pr'};
+  if(d>=90)    return{pill:d+'d · Stale',   pc:'pr'};
+  if(d>=30)    return{pill:d+'d · Aging',   pc:'pa'};
+  if(d>=7)     return{pill:d+'d · OK',      pc:'pa'};
+  return              {pill:d+'d · Fresh',  pc:'pg'};
+}
+
+function fmt(n){
+  if(n>=1e6)return(n/1e6).toFixed(1)+'M';
+  if(n>=1e3)return(n/1e3).toFixed(1)+'K';
+  return n.toLocaleString('en-IN');
+}
+
+// ─── HELPERS ───
+function markDone(n){
+  const el=document.getElementById('sn'+n);
+  el.textContent='✓';
+  el.style.cssText='background:var(--green);border-color:var(--green);color:#fff;';
+  document.getElementById('step'+n).classList.add('done');
+}
+
+function setStatus(id,type,msg){
+  const el=document.getElementById(id);
+  const icons={loading:'<div class="spinner"></div>',success:'✓',error:'✗',info:'ℹ'};
+  el.innerHTML=`<div class="status-bar ${type}">${icons[type]||''} ${msg}</div>`;
+}
+</script>
+</body>
+</html>
