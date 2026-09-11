@@ -58,7 +58,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--ink);font-size:14px;l
 }
 .cp-head-text h2{color:#fff;font-size:18px;font-weight:700;margin-bottom:4px;}
 .cp-head-text p{color:#9CA3AF;font-size:13px;line-height:1.6;}
-.steps-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border);}
+.steps-row{display:grid;grid-template-columns:1fr;border-top:1px solid var(--border);}
 .cp-step{padding:22px 24px;border-right:1px solid var(--border);position:relative;}
 .cp-step:last-child{border-right:none;}
 .cp-step.done{background:#F0FDF8;}
@@ -349,8 +349,6 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
       <button onclick="switchMode('extract')" id="btn-extract" class="hdr-mode" style="background:transparent;color:#9CA3AF;border:1px solid #4B5563;">🔍 Extract Dates</button>
     </div>
     <div class="hpill"><div class="dot" style="background:#22C55E;" id="h-dot"></div><span class="pv" id="h-total">—</span><span class="pl">URLs</span></div>
-    <div class="hpill"><div class="dot" style="background:#EF4444;"></div><span class="pv" id="h-actnow">—</span><span class="pl">Act Now</span></div>
-    <div class="hpill"><div class="dot" style="background:#3B82F6;"></div><span class="pv" id="h-sess">—</span><span class="pl">Sessions</span></div>
   </div>
 </header>
 
@@ -360,72 +358,20 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
   <div class="connect-panel" id="connectPanel">
     <div class="cp-head">
       <div class="cp-head-text">
-        <h2>Connect your data</h2>
-        <p>Sign in with Google to pull GA4 traffic · Upload your URL list · Optionally upload freshness data</p>
+        <h2>Analyze your content freshness</h2>
+        <p>Upload your URL list and extract publication dates automatically</p>
       </div>
     </div>
 
     <div class="steps-row">
 
-      <!-- STEP 1 — Google Sign-in -->
+      <!-- STEP 1 — URL List -->
       <div class="cp-step" id="step1">
         <div class="step-head">
           <div class="step-num" id="sn1">1</div>
           <div class="step-info">
-            <div class="st">Sign in with Google</div>
-            <div class="sd">Connect the Google account that has Viewer access to your GA4 property.</div>
-          </div>
-        </div>
-
-        <!-- Client ID input -->
-        <div style="margin-bottom:10px;">
-          <div style="font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:5px;">Your OAuth Client ID</div>
-          <div class="cid-row">
-            <input class="inp sm" id="clientIdInput" placeholder="xxxxx.apps.googleusercontent.com" type="text">
-            <button class="btn btn-ink" onclick="initOAuth()">Set</button>
-          </div>
-          <div class="onboard-note" id="cidNote">
-            First time? <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Open Google Cloud Console</a> →
-            Create Credentials → OAuth 2.0 Client ID → Web application →
-            Add <strong>http://localhost:8080</strong> as Authorized JavaScript origin → Copy Client ID above.
-            <br>Only takes 2 minutes. Done once.
-          </div>
-        </div>
-
-        <button class="google-btn" id="googleBtn" onclick="signInWithGoogle()" disabled>
-          <svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Sign in with Google
-        </button>
-
-        <div id="acctChip" style="display:none;"></div>
-        <div id="step1Status"></div>
-      </div>
-
-      <!-- STEP 2 — Property ID + Fetch -->
-      <div class="cp-step" id="step2">
-        <div class="step-head">
-          <div class="step-num" id="sn2">2</div>
-          <div class="step-info">
-            <div class="st">Pull GA4 Traffic</div>
-            <div class="sd">Enter your GA4 Property ID and fetch the last 90 days of traffic for your URLs.</div>
-          </div>
-        </div>
-        <div style="font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:5px;">GA4 Property ID</div>
-        <div class="prop-row">
-          <input class="inp" id="propInput" placeholder="e.g. 123456789" type="text" disabled>
-          <button class="btn btn-blue" id="fetchBtn" onclick="fetchGA4()" disabled>Fetch Traffic →</button>
-        </div>
-        <div class="prop-help">Find in GA4 → Admin → Property Settings → Property ID <a href="https://analytics.google.com" target="_blank">(open GA4 ↗)</a></div>
-        <div id="step2Status"></div>
-      </div>
-
-      <!-- STEP 3 — URL + Freshness -->
-      <div class="cp-step" id="step3">
-        <div class="step-head">
-          <div class="step-num" id="sn3">3</div>
-          <div class="step-info">
-            <div class="st">Upload Files</div>
-            <div class="sd">Upload your URL list. Optionally add freshness data from <span style="font-family:var(--fm);font-size:11px;">extract_dates.py</span>.</div>
+            <div class="st">Upload URLs & Extract Dates</div>
+            <div class="sd">Upload your URL list (CSV/TXT). We'll extract publication dates automatically using our date extraction tool.</div>
           </div>
         </div>
         <div class="ucard c1" id="ucard-urls" style="margin-bottom:8px;" onclick="document.getElementById('inp-urls').click()">
@@ -437,16 +383,9 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
           <button class="ubtn" onclick="event.stopPropagation();document.getElementById('inp-urls').click()">Upload</button>
         </div>
         <input type="file" id="inp-urls" accept=".txt,.csv" style="display:none">
-
-        <div class="ucard c2" id="ucard-fresh" onclick="document.getElementById('inp-fresh').click()">
-          <div class="ucard-icon" id="ui-fresh">📄</div>
-          <div class="ucard-info">
-            <div class="ut">Freshness Data <span style="font-size:10px;color:var(--muted);font-weight:400;">(optional)</span></div>
-            <div class="uh" id="uh-fresh">results.csv from extract_dates.py</div>
-          </div>
-          <button class="ubtn" onclick="event.stopPropagation();document.getElementById('inp-fresh').click()">Upload</button>
+        <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--muted);">
+          <strong>Or</strong> use the 🔍 <strong>Extract Dates</strong> tool in the header to process dates first, then upload results here.
         </div>
-        <input type="file" id="inp-fresh" accept=".csv" style="display:none">
       </div>
 
     </div>
@@ -496,35 +435,29 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
   <div id="dash" class="dashboard-panel">
 
     <!-- Priority Matrix -->
-    <div class="slabel">Priority Matrix</div>
+    <div class="slabel">Content Freshness Overview</div>
     <div class="matrix-header">
-      <h3>Content Action Map</h3>
-      <p>High traffic + stale content = Act Now. Click any quadrant to filter the table.</p>
+      <h3>URL Content Status</h3>
+      <p>See how stale your content is and prioritize updates</p>
     </div>
     <div class="matrix">
-      <div class="mq act" onclick="setFilter('actnow')">
-        <div class="mq-tag">🔴 Act Now</div>
+      <div class="mq act" onclick="setFilter('90')">
+        <div class="mq-tag">🔴 Critical</div>
         <div class="mq-n" id="mq-a">0</div>
-        <div class="mq-sub"><strong>High traffic · Stale 90+ days</strong><br>Highest SEO risk. Update immediately.</div>
+        <div class="mq-sub"><strong>Stale 90+ days</strong><br>Content needs urgent update.</div>
         <div class="mq-peek" id="pk-a"></div>
       </div>
       <div class="mq pro" onclick="setFilter('all')">
-        <div class="mq-tag">🟢 Protect</div>
+        <div class="mq-tag">🟢 Fresh</div>
         <div class="mq-n" id="mq-p">0</div>
-        <div class="mq-sub"><strong>High traffic · Fresh content</strong><br>Performing well. Keep monitoring.</div>
+        <div class="mq-sub"><strong>Updated <90 days ago</strong><br>Content is current. Keep monitoring.</div>
         <div class="mq-peek" id="pk-p"></div>
       </div>
-      <div class="mq que" onclick="setFilter('90')">
-        <div class="mq-tag">🟡 Queue</div>
+      <div class="mq que" onclick="setFilter('unknown')">
+        <div class="mq-tag">❓ Unknown</div>
         <div class="mq-n" id="mq-q">0</div>
-        <div class="mq-sub"><strong>Low traffic · Stale content</strong><br>Update after Act Now pages.</div>
+        <div class="mq-sub"><strong>No date found</strong><br>Use Extract Dates tool to find publication dates.</div>
         <div class="mq-peek" id="pk-q"></div>
-      </div>
-      <div class="mq mon" onclick="setFilter('all')">
-        <div class="mq-tag">⚪ Monitor</div>
-        <div class="mq-n" id="mq-m">0</div>
-        <div class="mq-sub"><strong>Low traffic · Fresh content</strong><br>Fine for now. Check growth.</div>
-        <div class="mq-peek" id="pk-m"></div>
       </div>
     </div>
 
@@ -558,29 +491,22 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
         </div>
         <div class="chips" id="chips">
           <span class="chip on"  data-f="all">All</span>
-          <span class="chip r"   data-f="actnow">🔴 Act Now</span>
-          <span class="chip a"   data-f="30">30+ days</span>
-          <span class="chip r"   data-f="90">90+ days</span>
-          <span class="chip b"   data-f="zero">Zero Traffic</span>
-          <span class="chip"     data-f="unknown">Unknown Date</span>
+          <span class="chip r"   data-f="90">🔴 90+ days</span>
+          <span class="chip a"   data-f="30">🟡 30-90 days</span>
+          <span class="chip b"   data-f="unknown">❓ Unknown Date</span>
         </div>
         <select class="srt-sel" id="srt">
-          <option value="priority">↓ Priority</option>
           <option value="days_d">↓ Most Stale</option>
           <option value="days_a">↑ Freshest</option>
-          <option value="sess_d">↓ Sessions</option>
-          <option value="sess_a">↑ Sessions</option>
+          <option value="alpha_a">A-Z URL</option>
         </select>
       </div>
       <div class="tbl-scroll">
         <table>
           <thead>
             <tr>
-              <th>#</th><th>URL</th><th>Updated</th><th>Age</th>
-              <th>Freshness</th><th>Priority</th>
-              <th style="text-align:right">Sessions</th>
-              <th style="text-align:right">Pageviews</th>
-              <th>Traffic</th><th>Method</th>
+              <th>#</th><th>URL</th><th>Published</th><th>Age</th>
+              <th>Freshness</th><th>Days Old</th><th>Method</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
@@ -764,151 +690,7 @@ function resetExtract() {
 }
 
 // ─── OAUTH ───
-let tokenClient = null;
-
-function initOAuth() {
-  const cid = document.getElementById('clientIdInput').value.trim();
-  if(!cid || !cid.includes('.apps.googleusercontent')) {
-    alert('Please paste a valid OAuth Client ID (ends with .apps.googleusercontent.com)');
-    return;
-  }
-  try {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: cid,
-      scope: 'https://www.googleapis.com/auth/analytics.readonly',
-      callback: onToken,
-      error_callback: onAuthError,
-    });
-    document.getElementById('googleBtn').disabled = false;
-    document.getElementById('cidNote').style.display = 'none';
-    setStatus('step1Status', 'info', 'Client ID saved. Click "Sign in with Google" below.');
-  } catch(e) {
-    setStatus('step1Status', 'error', 'Invalid Client ID: ' + e.message);
-  }
-}
-
-function signInWithGoogle() {
-  if(!tokenClient) {
-    setStatus('step1Status','error','Please set your Client ID first.');
-    return;
-  }
-  tokenClient.requestAccessToken({ prompt: 'consent' });
-}
-
-function onToken(resp) {
-  if(resp.error) { onAuthError(resp); return; }
-  accessToken = resp.access_token;
-
-  // Get user info
-  fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-    headers: { Authorization: 'Bearer ' + accessToken }
-  }).then(r => r.json()).then(info => {
-    const chip = document.getElementById('acctChip');
-    chip.innerHTML = `<div class="account-chip">✅ Signed in as ${info.email}</div>`;
-    chip.style.display = 'block';
-  });
-
-  markDone(1);
-  document.getElementById('propInput').disabled = false;
-  document.getElementById('fetchBtn').disabled  = false;
-  setStatus('step1Status','success','Connected! Now enter your Property ID in Step 2.');
-}
-
-function onAuthError(e) {
-  setStatus('step1Status','error','Auth error: ' + (e.message||e.error||'Please check your Client ID and try again.'));
-}
-
-// ─── GA4 FETCH ───
-async function fetchGA4() {
-  const propId = document.getElementById('propInput').value.trim();
-  if(!propId || isNaN(propId)) {
-    setStatus('step2Status','error','Please enter a valid Property ID (numbers only).');
-    return;
-  }
-  if(!accessToken) {
-    setStatus('step2Status','error','Please sign in with Google first.');
-    return;
-  }
-  if(!urlList.length) {
-    setStatus('step2Status','error','Please upload your URL list in Step 3 first.');
-    return;
-  }
-
-  document.getElementById('fetchBtn').disabled = true;
-  setStatus('step2Status','loading',`Fetching last ${DAYS_BACK} days for ${urlList.length} URLs…`);
-
-  try {
-    ga4Map = {};
-    const paths = urlList.map(urlToPath);
-    const BATCH = 50;
-
-    for(let i=0; i < paths.length; i += BATCH) {
-      const batch = paths.slice(i, i+BATCH);
-      setStatus('step2Status','loading',`Fetching batch ${Math.floor(i/BATCH)+1} / ${Math.ceil(paths.length/BATCH)}…`);
-
-      const filterExpressions = batch.map(p => ({
-        filter:{ fieldName:'pagePath', stringFilter:{ matchType:'EXACT', value:p, caseSensitive:false }}
-      }));
-
-      const body = {
-        dateRanges:[{ startDate: DAYS_BACK+'daysAgo', endDate:'today' }],
-        dimensions:[{ name:'pagePath' }],
-        metrics:[{ name:'sessions' },{ name:'screenPageViews' },{ name:'activeUsers' }],
-        dimensionFilter: batch.length===1
-          ? { filter:{ fieldName:'pagePath', stringFilter:{ matchType:'EXACT', value:batch[0], caseSensitive:false }}}
-          : { orGroup:{ expressions: filterExpressions }},
-        limit:10000
-      };
-
-      const res = await fetch(
-        `https://analyticsdata.googleapis.com/v1beta/properties/${propId}:runReport`,
-        { method:'POST', headers:{ 'Authorization':'Bearer '+accessToken, 'Content-Type':'application/json' }, body:JSON.stringify(body) }
-      );
-
-      if(!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error?.message || `HTTP ${res.status}`);
-      }
-
-      const data = await res.json();
-      (data.rows||[]).forEach(row => {
-        const p = row.dimensionValues[0].value;
-        ga4Map[p] = {
-          sessions:  parseInt(row.metricValues[0].value)||0,
-          pageviews: parseInt(row.metricValues[1].value)||0,
-          users:     parseInt(row.metricValues[2].value)||0
-        };
-      });
-    }
-
-    // Map paths back to URLs
-    const ga4ByUrl = {};
-    urlList.forEach(url => {
-      const p = urlToPath(url);
-      ga4ByUrl[url] = ga4Map[p] || { sessions:0, pageviews:0, users:0 };
-    });
-    ga4Map = ga4ByUrl;
-
-    const found = Object.values(ga4Map).filter(r=>r.sessions>0).length;
-    setStatus('step2Status','success',`✓ Fetched! ${found} / ${urlList.length} URLs had traffic.`);
-    markDone(2);
-    document.getElementById('tr-sec').style.display = 'block';
-    renderAll();
-  } catch(e) {
-    setStatus('step2Status','error','GA4 error: ' + e.message);
-  }
-
-  document.getElementById('fetchBtn').disabled = false;
-}
-
-function urlToPath(url) {
-  try {
-    const u = new URL(url);
-    return u.pathname + (u.search||'');
-  } catch(e) {
-    return url;
-  }
-}
+// OAuth removed - no longer required!
 
 // ─── FILE UPLOADS ───
 document.getElementById('inp-urls').addEventListener('change', async e => {
@@ -929,7 +711,6 @@ document.getElementById('inp-urls').addEventListener('change', async e => {
   document.getElementById('uh-urls').className   = 'uh ok';
   document.getElementById('ui-urls').textContent = '✅';
   document.getElementById('ucard-urls').classList.add('loaded');
-  markDone(3);
   tryRender();
 });
 
@@ -967,7 +748,7 @@ function csvSplit(l) {
 
 // ─── RENDER ───
 function tryRender() {
-  if(!urlList.length && !Object.keys(freshMap).length && !Object.keys(ga4Map).length) return;
+  if(!urlList.length && !Object.keys(freshMap).length) return;
   document.getElementById('dash').style.display  = 'block';
   document.getElementById('empty').style.display = 'none';
   renderAll();
@@ -980,23 +761,16 @@ function getRow(url) {
 }
 
 function pScore(r, med) {
-  const stale = r.days!==null ? Math.min(r.days/365,1) : 0.5;
-  const traf  = med>0 ? Math.min(r.sessions/(med*2),1) : 0;
-  return stale*.6 + traf*.4;
+  // Priority scoring removed - no longer needed without GA4
+  return 0;
 }
 
 function renderAll() {
   const master = urlList.length>0 ? urlList : Array.from(new Set([...Object.keys(freshMap),...Object.keys(ga4Map)]));
   const rows   = master.map(getRow);
-  const hasTr  = Object.keys(ga4Map).length>0;
-  const sv     = rows.map(r=>r.sessions).sort((a,b)=>a-b);
-  const med    = sv[Math.floor(sv.length/2)]||0;
 
   // Header
-  const actNow = rows.filter(r=>r.sessions>med&&(r.days===null||r.days>=90));
   document.getElementById('h-total').textContent  = rows.length;
-  document.getElementById('h-actnow').textContent = actNow.length;
-  document.getElementById('h-sess').textContent   = hasTr ? fmt(rows.reduce((a,r)=>a+r.sessions,0)) : '—';
   document.getElementById('run-time').textContent = 'Updated: '+new Date().toLocaleString('en-IN',{dateStyle:'short',timeStyle:'short'});
 
   // Staleness
@@ -1007,23 +781,15 @@ function renderAll() {
     document.getElementById('sf'+d).style.width=tot?(n/tot*100)+'%':'0%';
   });
 
-  // Traffic
-  if(hasTr){
-    document.getElementById('tv-s').textContent=fmt(rows.reduce((a,r)=>a+r.sessions,0));
-    document.getElementById('tv-p').textContent=fmt(rows.reduce((a,r)=>a+r.pageviews,0));
-    document.getElementById('tv-u').textContent=fmt(rows.reduce((a,r)=>a+r.users,0));
-    document.getElementById('tv-z').textContent=rows.filter(r=>r.sessions===0).length;
-  }
-
-  // Matrix
-  const protect=rows.filter(r=>r.sessions>med&&r.days!==null&&r.days<90);
-  const queue  =rows.filter(r=>r.sessions<=med&&(r.days===null||r.days>=90));
-  const monitor=rows.filter(r=>r.sessions<=med&&r.days!==null&&r.days<90);
-  document.getElementById('mq-a').textContent=actNow.length;
-  document.getElementById('mq-p').textContent=protect.length;
-  document.getElementById('mq-q').textContent=queue.length;
-  document.getElementById('mq-m').textContent=monitor.length;
-  peek('pk-a',actNow); peek('pk-p',protect); peek('pk-q',queue); peek('pk-m',monitor);
+  // Matrix (simplified - no traffic data needed)
+  const stale90=rows.filter(r=>r.days!==null&&r.days>=90);
+  const fresh=rows.filter(r=>r.days!==null&&r.days<90);
+  const unknown=rows.filter(r=>r.days===null);
+  document.getElementById('mq-a').textContent=stale90.length;
+  document.getElementById('mq-p').textContent=fresh.length;
+  document.getElementById('mq-q').textContent=unknown.length;
+  document.getElementById('mq-m').textContent='—';
+  peek('pk-a',stale90); peek('pk-p',fresh); peek('pk-q',unknown);
 
   applySort(master);
 }
@@ -1063,44 +829,32 @@ function refreshTable() {
 }
 
 function applySort(master) {
-  const sv=master.map(u=>(ga4Map[u]||{sessions:0}).sessions).sort((a,b)=>a-b);
-  const med=sv[Math.floor(sv.length/2)]||0;
   let rows=master.map(getRow);
 
   if(curSearch) rows=rows.filter(r=>r.url.toLowerCase().includes(curSearch));
-  if(curFilter==='actnow')  rows=rows.filter(r=>r.sessions>med&&(r.days===null||r.days>=90));
-  else if(curFilter==='30') rows=rows.filter(r=>r.days!==null&&r.days>=30);
-  else if(curFilter==='90') rows=rows.filter(r=>r.days!==null&&r.days>=90);
-  else if(curFilter==='zero')    rows=rows.filter(r=>r.sessions===0);
+  if(curFilter==='90') rows=rows.filter(r=>r.days!==null&&r.days>=90);
+  else if(curFilter==='30') rows=rows.filter(r=>r.days!==null&&r.days>=30&&r.days<90);
   else if(curFilter==='unknown') rows=rows.filter(r=>r.days===null);
 
   const srt=document.getElementById('srt').value;
   rows.sort((a,b)=>{
-    if(srt==='priority') return pScore(b,med)-pScore(a,med);
     if(srt==='days_d'){if(a.days===null)return 1;if(b.days===null)return-1;return b.days-a.days;}
     if(srt==='days_a'){if(a.days===null)return 1;if(b.days===null)return-1;return a.days-b.days;}
-    if(srt==='sess_d') return b.sessions-a.sessions;
-    if(srt==='sess_a') return a.sessions-b.sessions;
+    if(srt==='alpha_a') return a.url.localeCompare(b.url);
     return 0;
   });
-  renderTable(rows, med);
+  renderTable(rows, 0);
 }
 
 function renderTable(rows, med) {
-  const hasTr=Object.keys(ga4Map).length>0;
-  const maxS=Math.max(1,...rows.map(r=>r.sessions));
   const tbody=document.getElementById('tbody');
   tbody.innerHTML='';
   if(!rows.length){
-    tbody.innerHTML=`<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--subtle);font-family:var(--fm);">No URLs match this filter.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--subtle);font-family:var(--fm);">No URLs match this filter.</td></tr>`;
     document.getElementById('row-count').textContent='0 rows'; return;
   }
   rows.forEach((r,i)=>{
     const{pill,pc}=pillFor(r.days);
-    const ps=pScore(r,med);
-    const plb=ps>.55?'High':ps>.3?'Medium':'Low';
-    const pcl=ps>.55?'ph':ps>.3?'pm':'pl';
-    const bp=Math.round(r.sessions/maxS*100);
     const path=r.url.replace(/https?:\/\/(www\.)?/,'').split(/[?#]/)[0]||'/';
     const tr=document.createElement('tr');
     tr.innerHTML=`
@@ -1112,15 +866,12 @@ function renderTable(rows, med) {
       <td class="td-date">${r.date||'—'}</td>
       <td class="td-r">${r.days!==null?r.days+'d':'—'}</td>
       <td><span class="pill ${pc}">${pill}</span></td>
-      <td><span class="pbadge ${pcl}">${plb}</span></td>
-      <td class="td-r">${hasTr?fmt(r.sessions):'—'}</td>
-      <td class="td-r">${hasTr?fmt(r.pageviews):'—'}</td>
-      <td>${hasTr?`<div class="bar-cell"><div class="bar-bg"><div class="bar-fg" style="width:${bp}%"></div></div></div>`:'—'}</td>
-      <td class="td-mth" title="${r.method}">${r.method||'—'}</td>
+      <td class="td-r">${r.days!==null?r.days:'—'}</td>
+      <td class="td-r">${r.method||'—'}</td>
     `;
     tbody.appendChild(tr);
   });
-  document.getElementById('row-count').textContent=`${rows.length} of ${urlList.length||Object.keys({...freshMap,...ga4Map}).length} URLs`;
+  document.getElementById('row-count').textContent=`${rows.length} of ${urlList.length||Object.keys(freshMap).length} URLs`;
 }
 
 function pillFor(d) {
