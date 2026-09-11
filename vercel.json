@@ -1,10 +1,6 @@
 {
   "buildCommand": null,
   "installCommand": null,
-  "name": "content-freshness-dashboard",
-  "public": true,
-  "regions": ["iad1"],
-  "env": [],
   "headers": [
     {
       "source": "/(.*)",
