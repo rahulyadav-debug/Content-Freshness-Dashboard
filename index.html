@@ -31,149 +31,88 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--f);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
 
-/* ─── HEADER ─── */
 .hdr{background:var(--hdr);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;position:sticky;top:0;z-index:300;}
 .hdr-l{display:flex;align-items:center;gap:10px;}
 .hdr-logo{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,#6D28D9 0%,#1D4ED8 100%);display:flex;align-items:center;justify-content:center;font-size:15px;}
 .hdr-name{color:#fff;font-weight:700;font-size:14px;letter-spacing:-.01em;}
 .hdr-sub{color:#4B5563;font-size:11px;font-family:var(--fm);}
-.hdr-pills{display:flex;gap:8px;}
+.hdr-pills{display:flex;gap:8px;align-items:center;}
 .hpill{display:flex;align-items:center;gap:7px;background:#161925;border-radius:20px;padding:5px 14px;}
 .hpill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .hpill .pv{color:#fff;font-size:14px;font-weight:700;font-family:var(--fm);}
 .hpill .pl{color:#4B5563;font-size:10px;text-transform:uppercase;letter-spacing:.05em;}
 
-/* ─── PAGE ─── */
 .page{max-width:1320px;margin:0 auto;padding:32px 32px 64px;}
 
-/* ─── CONNECT PANEL ─── */
-.connect-panel{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
-  box-shadow:var(--sh);overflow:hidden;margin-bottom:28px;
-}
-.cp-head{
-  background:linear-gradient(135deg,#0C0E18 0%,#1a1f35 100%);
-  padding:28px 32px;display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:16px;
-}
+.connect-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:28px;}
+.cp-head{background:linear-gradient(135deg,#0C0E18 0%,#1a1f35 100%);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
 .cp-head-text h2{color:#fff;font-size:18px;font-weight:700;margin-bottom:4px;}
 .cp-head-text p{color:#9CA3AF;font-size:13px;line-height:1.6;}
-.steps-row{display:grid;grid-template-columns:1fr;border-top:1px solid var(--border);}
+.steps-row{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);}
 .cp-step{padding:22px 24px;border-right:1px solid var(--border);position:relative;}
 .cp-step:last-child{border-right:none;}
 .cp-step.done{background:#F0FDF8;}
-.step-num{
-  width:26px;height:26px;border-radius:50%;
-  background:var(--bg);border:1.5px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:700;color:var(--muted);
-  float:left;margin-right:10px;margin-top:1px;flex-shrink:0;
-  transition:all .2s;
-}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);float:left;margin-right:10px;margin-top:1px;flex-shrink:0;transition:all .2s;}
 .cp-step.done .step-num{background:var(--green);border-color:var(--green);color:#fff;}
 .step-head{display:flex;align-items:flex-start;margin-bottom:10px;}
 .step-info .st{font-size:13px;font-weight:600;margin-bottom:2px;}
 .step-info .sd{font-size:12px;color:var(--muted);line-height:1.5;}
 
-/* Client ID input */
 .cid-row{display:flex;gap:8px;margin-top:10px;}
-.inp{
-  flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:6px;
-  font-family:var(--f);font-size:13px;color:var(--ink);outline:none;
-  transition:border-color .15s;background:var(--s2);
-}
+.inp{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--f);font-size:13px;color:var(--ink);outline:none;transition:border-color .15s;background:var(--s2);}
 .inp:focus{border-color:var(--blue);background:#fff;}
 .inp.sm{font-size:12px;font-family:var(--fm);}
-.btn{
-  padding:9px 16px;border:none;border-radius:6px;
-  font-family:var(--f);font-size:12.5px;font-weight:600;
-  cursor:pointer;transition:all .15s;white-space:nowrap;
-}
+.btn{padding:9px 16px;border:none;border-radius:6px;font-family:var(--f);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-ink{background:var(--ink);color:#fff;}
 .btn-ink:hover{background:#2d2d2d;}
 .btn-green{background:var(--green);color:#fff;}
 .btn-green:hover{background:#166534;}
 .btn-blue{background:var(--blue);color:#fff;}
 .btn-blue:hover{background:#1e3fa8;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
 
-/* Google sign-in button */
-.google-btn{
-  display:flex;align-items:center;gap:10px;
-  background:#fff;border:1.5px solid #dadce0;border-radius:6px;
-  padding:9px 16px;cursor:pointer;font-family:var(--f);font-size:13px;
-  font-weight:500;color:#3c4043;transition:box-shadow .15s,border-color .15s;
-  width:100%;justify-content:center;margin-top:10px;
-}
+.google-btn{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #dadce0;border-radius:6px;padding:9px 16px;cursor:pointer;font-family:var(--f);font-size:13px;font-weight:500;color:#3c4043;transition:box-shadow .15s,border-color .15s;width:100%;justify-content:center;margin-top:10px;}
 .google-btn:hover{box-shadow:0 2px 6px rgba(0,0,0,.12);border-color:#aaa;}
 .google-btn:disabled{opacity:.5;cursor:not-allowed;}
 .g-icon{width:18px;height:18px;flex-shrink:0;}
 
-/* Account chip */
-.account-chip{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--green-lt);border:1px solid #86EFAC;border-radius:20px;
-  padding:5px 12px;font-size:12px;font-weight:500;color:var(--green);
-  margin-top:10px;
-}
+.account-chip{display:inline-flex;align-items:center;gap:8px;background:var(--green-lt);border:1px solid #86EFAC;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500;color:var(--green);margin-top:10px;}
 
-/* Property row */
 .prop-row{display:flex;gap:8px;margin-top:10px;align-items:flex-start;}
 .prop-help{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;}
 .prop-help a{color:var(--blue);text-decoration:none;}
 
-/* Status banner */
-.status-bar{
-  display:flex;align-items:center;gap:10px;padding:12px 16px;
-  border-radius:6px;margin-top:12px;font-size:12.5px;
-}
+.status-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:6px;margin-top:12px;font-size:12.5px;}
 .status-bar.loading{background:var(--blue-lt);color:var(--blue);}
 .status-bar.success{background:var(--green-lt);color:var(--green);}
 .status-bar.error  {background:var(--red-lt);color:var(--red);}
 .spinner{width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ─── UPLOAD CARDS ─── */
-.uploads{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
-.ucard{
-  background:var(--surface);border:1.5px dashed var(--border2);border-radius:var(--r);
-  padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;
-  transition:all .2s;
-}
+.ucard{background:var(--surface);border:1.5px dashed var(--border2);border-radius:var(--r);padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s;margin-top:10px;}
 .ucard:hover{border-color:var(--blue);background:#F6F9FF;}
 .ucard.loaded{border-style:solid;border-color:var(--green);background:#F0FDF6;}
-.ucard-icon{
-  width:40px;height:40px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
-}
-.ucard.c1 .ucard-icon{background:var(--violet-lt);}
-.ucard.c2 .ucard-icon{background:var(--blue-lt);}
+.ucard-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--violet-lt);}
 .ucard.loaded .ucard-icon{background:var(--green-lt);}
 .ucard-info .ut{font-size:13px;font-weight:600;margin-bottom:2px;}
 .ucard-info .uh{font-size:11.5px;color:var(--muted);font-family:var(--fm);}
 .ucard-info .uh.ok{color:var(--green);font-weight:500;}
-.ubtn{
-  margin-left:auto;background:var(--s2);border:1px solid var(--border);
-  border-radius:6px;padding:7px 13px;font-size:12px;font-weight:600;
-  font-family:var(--f);cursor:pointer;flex-shrink:0;color:var(--ink);
-  transition:all .15s;
-}
+.ubtn{margin-left:auto;background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:7px 13px;font-size:12px;font-weight:600;font-family:var(--f);cursor:pointer;flex-shrink:0;color:var(--ink);transition:all .15s;}
 .ubtn:hover{background:var(--border);}
 .ucard.loaded .ubtn{background:var(--green-lt);border-color:#86EFAC;color:var(--green);}
 
-/* ─── SECTION LABEL ─── */
+.extract-progress{margin:16px 0 4px;}
+.progress-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--blue);transition:width .3s;}
+.progress-label{font-size:11.5px;color:var(--muted);margin-bottom:6px;font-family:var(--fm);}
+
 .slabel{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);margin-bottom:10px;}
 
-/* ─── PRIORITY MATRIX ─── */
 .matrix-header{margin-bottom:12px;}
 .matrix-header h3{font-size:17px;font-weight:700;margin-bottom:3px;}
 .matrix-header p{font-size:13px;color:var(--muted);}
 .matrix{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
-.mq{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);
-  cursor:pointer;transition:transform .15s,box-shadow .15s;
-  border-top:3px solid transparent;
-}
+.mq{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);cursor:pointer;transition:transform .15s,box-shadow .15s;border-top:3px solid transparent;}
 .mq:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
 .mq.act{border-top-color:var(--red);}
 .mq.pro{border-top-color:var(--green);}
@@ -192,7 +131,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--ink);font-size:14px;l
 .mq-sub{font-size:12.5px;color:var(--muted);line-height:1.5;}
 .mq-peek{margin-top:10px;font-size:11px;font-family:var(--fm);color:var(--subtle);border-top:1px solid var(--border);padding-top:8px;white-space:pre-line;line-height:1.7;}
 
-/* ─── STAT CARDS ─── */
 .statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px;}
 .sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);}
 .sc .sv{font-size:30px;font-weight:800;font-family:var(--fm);line-height:1;}
@@ -206,7 +144,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--ink);font-size:14px;l
 .tstat{border-top:3px solid var(--blue)!important;}
 .tstat .sv{color:var(--blue)!important;}
 
-/* ─── TABLE ─── */
 .tbl-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;}
 .tbl-bar{padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .srch{flex:1;min-width:160px;display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:7px 11px;}
@@ -254,7 +191,6 @@ tr:hover td{background:var(--s2);}
 
 .tbl-foot{padding:10px 16px;border-top:1px solid var(--border);background:var(--s2);display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--muted);font-family:var(--fm);}
 
-/* ─── EMPTY ─── */
 .empty{text-align:center;padding:60px 20px;display:none;}
 .empty .ei{font-size:44px;margin-bottom:14px;}
 .empty h3{font-size:16px;font-weight:700;margin-bottom:6px;}
@@ -262,11 +198,7 @@ tr:hover td{background:var(--s2);}
 
 footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-family:var(--fm);}
 
-/* ─── ONBOARDING NOTE ─── */
-.onboard-note{
-  background:var(--violet-lt);border:1px solid #C4B5FD;border-radius:6px;
-  padding:10px 14px;font-size:12px;color:var(--violet);line-height:1.6;margin-top:10px;
-}
+.onboard-note{background:var(--violet-lt);border:1px solid #C4B5FD;border-radius:6px;padding:10px 14px;font-size:12px;color:var(--violet);line-height:1.6;margin-top:10px;}
 .onboard-note a{color:var(--violet);font-weight:600;}
 
 @media (max-width: 768px) {
@@ -280,61 +212,10 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
   .hdr-pills { gap: 4px; }
   .hpill { padding: 4px 10px; font-size: 12px; }
 }
-
-/* ─── MODE BUTTONS ─── */
-.hdr-mode{
-  padding:6px 12px;border-radius:4px;font-size:11px;font-weight:600;
-  cursor:pointer;transition:all .15s;border:none;font-family:var(--f);
-}
-.hdr-mode:hover{opacity:0.9;}
-
-/* ─── EXTRACT TOOL ─── */
-.extract-panel{display:none;}
-.extract-panel.active{display:block;}
-.extract-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
-  box-shadow:var(--sh);padding:28px 32px;margin-bottom:28px;
-}
-.extract-title{font-size:18px;font-weight:700;margin-bottom:8px;}
-.extract-desc{font-size:13px;color:var(--muted);margin-bottom:20px;}
-.upload-area{
-  border:2px dashed var(--border2);border-radius:var(--r);padding:32px;
-  text-align:center;cursor:pointer;transition:all .2s;background:var(--s2);
-}
-.upload-area:hover{border-color:var(--blue);background:#F6F9FF;}
-.upload-area.active{border-color:var(--green);background:#F0FDF8;}
-.upload-icon{font-size:40px;margin-bottom:10px;}
-.upload-text{font-size:13px;font-weight:600;margin-bottom:4px;}
-.upload-hint{font-size:11px;color:var(--muted);}
-#extract-input{display:none;}
-.extract-results{display:none;}
-.extract-results.active{display:block;}
-.extract-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
-.extract-table th{
-  padding:12px;text-align:left;font-size:11px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
-  background:var(--s2);border-bottom:1.5px solid var(--border);
-}
-.extract-table td{
-  padding:12px;border-bottom:1px solid var(--border);font-size:12px;
-}
-.extract-table tr:hover td{background:var(--s2);}
-.extract-progress{margin:20px 0;}
-.progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
-.progress-fill{height:100%;background:var(--blue);transition:width .3s;}
-.extract-actions{display:flex;gap:10px;margin-top:20px;}
-.btn-download{
-  background:var(--green);color:#fff;padding:10px 20px;
-  border-radius:6px;border:none;cursor:pointer;font-weight:600;
-  font-size:13px;transition:all .15s;
-}
-.btn-download:hover{background:#166534;}
-
 </style>
 </head>
 <body>
 
-<!-- ─── HEADER ─── -->
 <header class="hdr">
   <div class="hdr-l">
     <div class="hdr-logo">🎯</div>
@@ -344,37 +225,60 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
     </div>
   </div>
   <div class="hdr-pills">
-    <div style="display:flex;gap:8px;margin-right:auto;">
-      <button onclick="switchMode('dashboard')" id="btn-dash" class="hdr-mode" style="background:#1D4ED8;color:#fff;">📊 Dashboard</button>
-      <button onclick="switchMode('extract')" id="btn-extract" class="hdr-mode" style="background:transparent;color:#9CA3AF;border:1px solid #4B5563;">🔍 Extract Dates</button>
-    </div>
     <div class="hpill"><div class="dot" style="background:#22C55E;" id="h-dot"></div><span class="pv" id="h-total">—</span><span class="pl">URLs</span></div>
   </div>
 </header>
 
 <div class="page">
 
-  <!-- ─── CONNECT PANEL ─── -->
+  <!-- ─── ONE-STEP CONNECT + UPLOAD PANEL ─── -->
   <div class="connect-panel" id="connectPanel">
     <div class="cp-head">
       <div class="cp-head-text">
         <h2>Analyze your content freshness</h2>
-        <p>Upload your URL list and extract publication dates automatically</p>
+        <p>Connect Google Analytics, then upload your URL list — dates and last-30-day sessions are pulled in automatically.</p>
       </div>
     </div>
 
     <div class="steps-row">
 
-      <!-- STEP 1 — URL List -->
+      <!-- STEP 1 — GA4 Connect (optional but needed for sessions) -->
       <div class="cp-step" id="step1">
         <div class="step-head">
           <div class="step-num" id="sn1">1</div>
           <div class="step-info">
-            <div class="st">Upload URLs & Extract Dates</div>
-            <div class="sd">Upload your URL list (CSV/TXT). We'll extract publication dates automatically using our date extraction tool.</div>
+            <div class="st">Connect Google Analytics</div>
+            <div class="sd">Sign in and enter your GA4 Property ID to pull sessions for the last 30 days. Optional — you can skip this and just get publish dates.</div>
           </div>
         </div>
-        <div class="ucard c1" id="ucard-urls" style="margin-bottom:8px;" onclick="document.getElementById('inp-urls').click()">
+
+        <div class="cid-row">
+          <input class="inp sm" id="clientIdInput" placeholder="OAuth Client ID (one-time — from Google Cloud Console)">
+        </div>
+        <button class="google-btn" id="btn-google" onclick="startGoogleSignIn()">
+          <svg class="g-icon" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.2 5.5 29.4 3.5 24 3.5 12.7 3.5 3.5 12.7 3.5 24S12.7 44.5 24 44.5 44.5 35.3 44.5 24c0-1.2-.1-2.3-.3-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.6 15.1 18.9 12 24 12c3.1 0 5.8 1.1 8 3l6-6C34.2 5.5 29.4 3.5 24 3.5c-8 0-14.8 4.6-17.7 11.2z"/><path fill="#4CAF50" d="M24 44.5c5.3 0 10-1.8 13.7-5l-6.3-5.3C29.4 35.6 26.8 36.5 24 36.5c-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.1 40 16 44.5 24 44.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.3 5.3c-.4.4 6.6-4.8 6.6-14.9 0-1.2-.1-2.3-.4-3.5z"/></svg>
+          Sign in with Google
+        </button>
+        <div id="accountArea"></div>
+
+        <div class="prop-row" id="propArea" style="display:none;">
+          <input class="inp sm" id="propertyId" placeholder="GA4 Property ID (e.g. 123456789)">
+          <button class="btn btn-blue" onclick="fetchGA4Data()">Fetch Sessions</button>
+        </div>
+        <div class="prop-help" id="propHelp" style="display:none;">Find this in GA4 → Admin → Property Settings.</div>
+        <div id="ga4Status"></div>
+      </div>
+
+      <!-- STEP 2 — Upload URLs, auto-extract everything -->
+      <div class="cp-step" id="step2">
+        <div class="step-head">
+          <div class="step-num" id="sn2">2</div>
+          <div class="step-info">
+            <div class="st">Upload URLs</div>
+            <div class="sd">CSV or TXT list of URLs. We automatically fetch each page's published date and match it to GA4 sessions.</div>
+          </div>
+        </div>
+        <div class="ucard" id="ucard-urls" onclick="document.getElementById('inp-urls').click()">
           <div class="ucard-icon" id="ui-urls">📂</div>
           <div class="ucard-info">
             <div class="ut">URL List</div>
@@ -383,58 +287,22 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
           <button class="ubtn" onclick="event.stopPropagation();document.getElementById('inp-urls').click()">Upload</button>
         </div>
         <input type="file" id="inp-urls" accept=".txt,.csv" style="display:none">
-        <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--muted);">
-          <strong>Or</strong> use the 🔍 <strong>Extract Dates</strong> tool in the header to process dates first, then upload results here.
+
+        <div class="extract-progress" id="extractProgress" style="display:none;">
+          <div class="progress-label" id="extractStatus">Extracting 0/0…</div>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        </div>
+        <div class="onboard-note">
+          ℹ Live date-fetching only works for pages that allow cross-origin requests. Pages that block this (most sites, by default) will show as "Unknown" — a server-side proxy would be needed to cover 100% of sites reliably.
         </div>
       </div>
 
-    </div>
-  </div>
-
-  <!-- ─── EXTRACT DATES TOOL ─── -->
-  <div id="extract" class="extract-panel">
-    <div class="extract-card">
-      <div class="extract-title">🔍 Extract Content Dates</div>
-      <div class="extract-desc">Upload a CSV with URLs, extract publication dates, and download results to use in your dashboard.</div>
-      
-      <div class="upload-area" id="dropArea" onclick="document.getElementById('extract-input').click()">
-        <div class="upload-icon">📤</div>
-        <div class="upload-text">Upload URL List (CSV/TXT)</div>
-        <div class="upload-hint">Drag & drop or click to select • urls.csv or urls.txt</div>
-      </div>
-      <input type="file" id="extract-input" accept=".csv,.txt" onchange="handleExtractFile(event)">
-      
-      <div class="extract-progress" id="extractProgress" style="display:none;">
-        <div style="margin-bottom:8px;font-size:12px;color:var(--muted);">
-          Processing: <span id="extractStatus">0/0</span> URLs
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill" style="width:0%"></div>
-        </div>
-      </div>
-      
-      <div class="extract-results" id="extractResults">
-        <table class="extract-table">
-          <thead>
-            <tr>
-              <th>#</th><th>URL</th><th>Date</th><th>Days Old</th><th>Method</th>
-            </tr>
-          </thead>
-          <tbody id="extractTableBody"></tbody>
-        </table>
-        
-        <div class="extract-actions">
-          <button class="btn-download" onclick="downloadExtractedCSV()">📥 Download results.csv</button>
-          <button class="btn" style="background:var(--s2);color:var(--ink);" onclick="resetExtract()">Clear & Start Over</button>
-        </div>
-      </div>
     </div>
   </div>
 
   <!-- ─── DASHBOARD ─── -->
-  <div id="dash" class="dashboard-panel">
+  <div id="dash" class="dashboard-panel" style="display:none;">
 
-    <!-- Priority Matrix -->
     <div class="slabel">Priority Matrix</div>
     <div class="matrix-header">
       <h3>Content Action Map</h3>
@@ -467,7 +335,6 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
       </div>
     </div>
 
-    <!-- Freshness Stats -->
     <div class="slabel">Staleness Breakdown</div>
     <div class="statrow">
       <div class="sc s7">  <div class="sv" id="sv7">0</div>  <div class="sl">Stale 7+ days</div>  <div class="sp"><div class="sf" id="sf7"  style="width:0%"></div></div></div>
@@ -476,9 +343,8 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
       <div class="sc s120"><div class="sv" id="sv120">0</div><div class="sl">Stale 120+ days</div><div class="sp"><div class="sf" id="sf120"style="width:0%"></div></div></div>
     </div>
 
-    <!-- Traffic Stats -->
     <div id="tr-sec" style="display:none;">
-      <div class="slabel">GA4 Traffic — Last 90 Days</div>
+      <div class="slabel">GA4 Traffic — Last 30 Days</div>
       <div class="statrow">
         <div class="sc tstat"><div class="sv" id="tv-s">0</div><div class="sl">Total Sessions</div></div>
         <div class="sc tstat"><div class="sv" id="tv-p">0</div><div class="sl">Total Pageviews</div></div>
@@ -487,7 +353,6 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
       </div>
     </div>
 
-    <!-- Table -->
     <div class="slabel">All URLs</div>
     <div class="tbl-card">
       <div class="tbl-bar">
@@ -533,7 +398,7 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
   <div class="empty" id="empty">
     <div class="ei">📋</div>
     <h3>Upload your URL list to get started</h3>
-    <p>Sign in with Google and upload your URLs in Step 3.</p>
+    <p>Optionally connect Google Analytics in Step 1, then upload your URLs in Step 2.</p>
   </div>
 
 </div>
@@ -546,195 +411,89 @@ let accessToken = null;
 let urlList  = [];
 let freshMap = {};
 let ga4Map   = {};
+const DAYS_BACK = 30; // last 30 days, per spec
 let curFilter = 'all';
 let curSearch = '';
-let currentMode = 'dashboard';
-let extractResults = [];
-const DAYS_BACK = 90;
+let tokenClient = null;
 
-// ─── MODE SWITCHING ───
-function switchMode(mode) {
-  currentMode = mode;
-  
-  // Update buttons
-  document.getElementById('btn-dash').style.background = mode === 'dashboard' ? '#1D4ED8' : 'transparent';
-  document.getElementById('btn-dash').style.color = mode === 'dashboard' ? '#fff' : '#9CA3AF';
-  document.getElementById('btn-dash').style.border = mode === 'dashboard' ? 'none' : '1px solid #4B5563';
-  
-  document.getElementById('btn-extract').style.background = mode === 'extract' ? '#1D4ED8' : 'transparent';
-  document.getElementById('btn-extract').style.color = mode === 'extract' ? '#fff' : '#9CA3AF';
-  document.getElementById('btn-extract').style.border = mode === 'extract' ? 'none' : '1px solid #4B5563';
-  
-  // Toggle panels
-  document.getElementById('extract').style.display = mode === 'extract' ? 'block' : 'none';
-  document.getElementById('dash').style.display = mode === 'dashboard' ? 'block' : 'none';
-  document.getElementById('connectPanel').style.display = mode === 'dashboard' ? 'block' : 'none';
-}
+// ─── GOOGLE SIGN-IN (GA4 OAuth) ───
+function startGoogleSignIn() {
+  const clientId = document.getElementById('clientIdInput').value.trim();
+  if (!clientId) { alert('Enter your OAuth Client ID first.'); return; }
 
-// ─── EXTRACTION TOOL ───
-async function handleExtractFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  const text = await file.text();
-  let urls = [];
-  
-  if (file.name.endsWith('.csv')) {
-    const lines = text.trim().split('\n');
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-    const urlIndex = headers.indexOf('url');
-    urls = lines.slice(1).map(line => {
-      const cells = line.split(',');
-      return (urlIndex >= 0 ? cells[urlIndex] : cells[0]).trim().replace(/"/g, '');
-    }).filter(u => u.startsWith('http'));
-  } else {
-    urls = text.split('\n').map(l => l.trim()).filter(u => u.startsWith('http'));
-  }
-  
-  if (!urls.length) {
-    alert('No valid URLs found');
+  if (!window.google || !google.accounts || !google.accounts.oauth2) {
+    alert('Google sign-in library not loaded yet — try again in a moment.');
     return;
   }
-  
-  // Extract dates
-  await extractDates(urls);
-}
 
-async function extractDates(urls) {
-  document.getElementById('extractProgress').style.display = 'block';
-  document.getElementById('extractResults').classList.remove('active');
-  extractResults = [];
-  
-  for (let i = 0; i < urls.length; i++) {
-    const url = urls[i];
-    document.getElementById('extractStatus').textContent = `${i + 1}/${urls.length}`;
-    document.getElementById('progressFill').style.width = ((i + 1) / urls.length * 100) + '%';
-    
-    const result = await extractDateFromURL(url);
-    extractResults.push(result);
-  }
-  
-  document.getElementById('extractProgress').style.display = 'none';
-  renderExtractResults();
-  document.getElementById('extractResults').classList.add('active');
-}
-
-async function extractDateFromURL(url) {
-  try {
-    // Fetch page HTML
-    const pageResp = await fetch(url).catch(() => null);
-    if (!pageResp || !pageResp.ok) {
-      return { url, date: '', days_old: null, method: 'Error: ' + (pageResp ? pageResp.status : 'No response') };
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: clientId,
+    scope: 'https://www.googleapis.com/auth/analytics.readonly',
+    callback: (resp) => {
+      if (resp.error) { setStatus('ga4Status','error','Sign-in failed: '+resp.error); return; }
+      accessToken = resp.access_token;
+      document.getElementById('accountArea').innerHTML =
+        '<div class="account-chip">✓ Signed in — access granted</div>';
+      document.getElementById('propArea').style.display='flex';
+      document.getElementById('propHelp').style.display='block';
+      markDone(1);
     }
-    
-    const html = await pageResp.text();
-    
-    // Try JSON-LD datePublished first (most reliable)
-    let match = html.match(/"datePublished"\s*:\s*"([^"]+)"/i);
-    if (match && match[1]) {
-      const dateStr = match[1].substring(0, 10);
-      const date = new Date(dateStr);
-      if (!isNaN(date.getTime())) {
-        const daysOld = Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
-        return { url, date: dateStr, days_old: daysOld, method: 'JSON-LD datePublished' };
-      }
-    }
-    
-    // Try meta tags using regex (more reliable than DOMParser for CORS issues)
-    const metaPatterns = [
-      { pattern: /<meta\s+property=["']article:published_time["']\s+content=["']([^"']+)["']/i, name: 'Meta: article:published_time' },
-      { pattern: /<meta\s+property=["']article:modified_time["']\s+content=["']([^"']+)["']/i, name: 'Meta: article:modified_time' },
-      { pattern: /<meta\s+name=["']publish_date["']\s+content=["']([^"']+)["']/i, name: 'Meta: publish_date' },
-      { pattern: /<meta\s+itemprop=["']datePublished["']\s+content=["']([^"']+)["']/i, name: 'Meta: datePublished' },
-      { pattern: /<meta\s+name=["']date["']\s+content=["']([^"']+)["']/i, name: 'Meta: date' },
-      { pattern: /<meta\s+name=["']og:published_time["']\s+content=["']([^"']+)["']/i, name: 'Meta: og:published_time' },
-      { pattern: /<time[^>]*datetime=["']([^"']+)["']/i, name: 'HTML time tag' }
-    ];
-    
-    for (const {pattern, name} of metaPatterns) {
-      match = html.match(pattern);
-      if (match && match[1]) {
-        const dateStr = match[1].substring(0, 10);
-        const date = new Date(dateStr);
-        if (!isNaN(date.getTime())) {
-          const daysOld = Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
-          return { url, date: dateStr, days_old: daysOld, method: name };
-        }
-      }
-    }
-    
-    // Try Last-Modified header from initial response headers
-    const lm = pageResp.headers.get('last-modified');
-    if (lm) {
-      const date = new Date(lm);
-      if (!isNaN(date.getTime())) {
-        const dateStr = date.toISOString().substring(0, 10);
-        const daysOld = Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
-        return { url, date: dateStr, days_old: daysOld, method: 'Last-Modified Header' };
-      }
-    }
-    
-    // Try pattern matching YYYY-MM-DD in HTML
-    match = html.match(/\b(\d{4}-\d{2}-\d{2})\b/);
-    if (match && match[1]) {
-      const date = new Date(match[1]);
-      if (!isNaN(date.getTime())) {
-        const daysOld = Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
-        return { url, date: match[1], days_old: daysOld, method: 'Pattern: YYYY-MM-DD' };
-      }
-    }
-    
-    return { url, date: '', days_old: null, method: 'Not found' };
-  } catch (e) {
-    return { url, date: '', days_old: null, method: `Error: ${e.message.substring(0, 20)}` };
-  }
-}
-
-function renderExtractResults() {
-  const tbody = document.getElementById('extractTableBody');
-  tbody.innerHTML = '';
-  extractResults.forEach((r, i) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${i + 1}</td>
-      <td><a href="${r.url}" target="_blank" style="color:var(--blue);text-decoration:none;">${r.url.substring(0, 50)}...</a></td>
-      <td>${r.date || '—'}</td>
-      <td>${r.days_old !== null ? r.days_old + 'd' : '—'}</td>
-      <td style="font-size:10px;color:var(--muted);">${r.method}</td>
-    `;
-    tbody.appendChild(tr);
   });
+  tokenClient.requestAccessToken();
 }
 
-function downloadExtractedCSV() {
-  const csv = 'url,date,days_old,method\n' + extractResults.map(r =>
-    `"${r.url}","${r.date}","${r.days_old}","${r.method}"`
-  ).join('\n');
-  
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'results.csv';
-  a.click();
-  URL.revokeObjectURL(url);
+async function fetchGA4Data() {
+  const propertyId = document.getElementById('propertyId').value.trim();
+  if (!propertyId) { alert('Enter your GA4 Property ID.'); return; }
+  if (!accessToken) { alert('Sign in with Google first.'); return; }
+
+  setStatus('ga4Status','loading',`Fetching last ${DAYS_BACK} days of sessions…`);
+
+  try {
+    const resp = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        dateRanges: [{ startDate: `${DAYS_BACK}daysAgo`, endDate: 'today' }],
+        dimensions: [{ name: 'pagePath' }],
+        metrics: [{ name: 'sessions' }, { name: 'screenPageViews' }, { name: 'totalUsers' }],
+        limit: 100000
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(()=>({}));
+      setStatus('ga4Status','error', 'GA4 error: ' + (err.error?.message || resp.status));
+      return;
+    }
+
+    const data = await resp.json();
+    ga4Map = {};
+    (data.rows || []).forEach(row => {
+      const path = row.dimensionValues[0].value;
+      ga4Map[path] = {
+        sessions:   parseInt(row.metricValues[0].value) || 0,
+        pageviews:  parseInt(row.metricValues[1].value) || 0,
+        users:      parseInt(row.metricValues[2].value) || 0
+      };
+    });
+
+    setStatus('ga4Status','success', `✓ Pulled sessions for ${Object.keys(ga4Map).length} paths`);
+    document.getElementById('tr-sec').style.display = 'block';
+    tryRender();
+  } catch (e) {
+    setStatus('ga4Status','error', 'Request failed: ' + e.message);
+  }
 }
 
-function resetExtract() {
-  extractResults = [];
-  document.getElementById('extract-input').value = '';
-  document.getElementById('extractResults').classList.remove('active');
-  document.getElementById('extractTableBody').innerHTML = '';
-}
-
-// ─── OAUTH ───
-// OAuth removed - no longer required!
-
-// ─── FILE UPLOADS ───
+// ─── URL UPLOAD → AUTO DATE EXTRACTION ───
 document.getElementById('inp-urls').addEventListener('change', async e => {
   const file = e.target.files[0]; if(!file) return;
   const text = await file.text();
-  if(file.name.endsWith('.csv')) {
+  if (file.name.endsWith('.csv')) {
     const lines = text.trim().split('\n');
     const h = lines[0].split(',').map(x=>x.trim().toLowerCase());
     const ui = h.indexOf('url');
@@ -745,57 +504,104 @@ document.getElementById('inp-urls').addEventListener('change', async e => {
   } else {
     urlList = text.split('\n').map(l=>l.trim()).filter(u=>u.startsWith('http'));
   }
-  document.getElementById('uh-urls').textContent = `✓ ${urlList.length} URLs · ${file.name}`;
+
+  document.getElementById('uh-urls').textContent = `${urlList.length} URLs · ${file.name}`;
   document.getElementById('uh-urls').className   = 'uh ok';
   document.getElementById('ui-urls').textContent = '✅';
   document.getElementById('ucard-urls').classList.add('loaded');
-  markDone(1);
+  markDone(2);
+
+  await extractDatesForList(urlList);
   tryRender();
 });
 
-document.getElementById('inp-fresh').addEventListener('change', async e => {
-  const file = e.target.files[0]; if(!file) return;
-  freshMap = parseCSV(await file.text());
-  document.getElementById('uh-fresh').textContent = `✓ ${Object.keys(freshMap).length} URLs · ${file.name}`;
-  document.getElementById('uh-fresh').className   = 'uh ok';
-  document.getElementById('ui-fresh').textContent = '✅';
-  document.getElementById('ucard-fresh').classList.add('loaded');
-  tryRender();
-});
-
-function parseCSV(text) {
-  const lines = text.trim().split('\n').filter(l=>l.trim());
-  if(lines.length<2) return {};
-  const hdr = lines[0].split(',').map(h=>h.trim().replace(/"/g,'').toLowerCase());
-  const out = {};
-  for(let i=1;i<lines.length;i++) {
-    const cols = csvSplit(lines[i]);
-    const row  = {};
-    hdr.forEach((h,j)=>{ row[h]=(cols[j]||'').trim().replace(/"/g,''); });
-    const url=row['url']; if(!url||!url.startsWith('http')) continue;
-    const d=row['days_old'];
-    out[url]={ date:row['date']||'', days:(d!==''&&!isNaN(parseInt(d)))?parseInt(d):null, method:row['method']||'' };
+async function extractDatesForList(urls) {
+  freshMap = {};
+  document.getElementById('extractProgress').style.display = 'block';
+  for (let i=0; i<urls.length; i++) {
+    const url = urls[i];
+    document.getElementById('extractStatus').textContent = `Extracting ${i+1}/${urls.length}…`;
+    document.getElementById('progressFill').style.width = ((i+1)/urls.length*100)+'%';
+    freshMap[url] = await extractDateFromURL(url);
+    tryRender(); // progressive render as results come in
   }
-  return out;
+  document.getElementById('extractProgress').style.display = 'none';
 }
 
-function csvSplit(l) {
-  const r=[];let c='';let q=false;
-  for(const ch of l){if(ch==='"'){q=!q;}else if(ch===','&&!q){r.push(c);c='';}else{c+=ch;}}
-  r.push(c);return r;
+async function extractDateFromURL(url) {
+  try {
+    const pageResp = await fetch(url).catch(() => null);
+    if (!pageResp || !pageResp.ok) {
+      return { date:'', days:null, method:'Unknown (fetch blocked/CORS)' };
+    }
+    const html = await pageResp.text();
+
+    let match = html.match(/"datePublished"\s*:\s*"([^"]+)"/i);
+    if (match && match[1]) {
+      const dateStr = match[1].substring(0,10);
+      const date = new Date(dateStr);
+      if (!isNaN(date.getTime())) {
+        return { date:dateStr, days:daysSince(date), method:'JSON-LD datePublished' };
+      }
+    }
+
+    const metaPatterns = [
+      { pattern: /<meta\s+property=["']article:published_time["']\s+content=["']([^"']+)["']/i, name: 'Meta: article:published_time' },
+      { pattern: /<meta\s+property=["']article:modified_time["']\s+content=["']([^"']+)["']/i, name: 'Meta: article:modified_time' },
+      { pattern: /<meta\s+name=["']publish_date["']\s+content=["']([^"']+)["']/i, name: 'Meta: publish_date' },
+      { pattern: /<meta\s+itemprop=["']datePublished["']\s+content=["']([^"']+)["']/i, name: 'Meta: datePublished' },
+      { pattern: /<meta\s+name=["']date["']\s+content=["']([^"']+)["']/i, name: 'Meta: date' },
+      { pattern: /<meta\s+name=["']og:published_time["']\s+content=["']([^"']+)["']/i, name: 'Meta: og:published_time' },
+      { pattern: /<time[^>]*datetime=["']([^"']+)["']/i, name: 'HTML time tag' }
+    ];
+    for (const {pattern, name} of metaPatterns) {
+      match = html.match(pattern);
+      if (match && match[1]) {
+        const dateStr = match[1].substring(0,10);
+        const date = new Date(dateStr);
+        if (!isNaN(date.getTime())) return { date:dateStr, days:daysSince(date), method:name };
+      }
+    }
+
+    const lm = pageResp.headers.get('last-modified');
+    if (lm) {
+      const date = new Date(lm);
+      if (!isNaN(date.getTime())) {
+        return { date: date.toISOString().substring(0,10), days:daysSince(date), method:'Last-Modified Header' };
+      }
+    }
+
+    match = html.match(/\b(\d{4}-\d{2}-\d{2})\b/);
+    if (match && match[1]) {
+      const date = new Date(match[1]);
+      if (!isNaN(date.getTime())) return { date:match[1], days:daysSince(date), method:'Pattern: YYYY-MM-DD' };
+    }
+
+    return { date:'', days:null, method:'Not found' };
+  } catch (e) {
+    return { date:'', days:null, method:'Unknown (blocked/CORS)' };
+  }
+}
+
+function daysSince(date) {
+  return Math.floor((new Date() - date) / (1000*60*60*24));
 }
 
 // ─── RENDER ───
 function tryRender() {
-  if(!urlList.length && !Object.keys(freshMap).length) return;
+  if (!urlList.length) return;
   document.getElementById('dash').style.display  = 'block';
   document.getElementById('empty').style.display = 'none';
   renderAll();
 }
 
+function pathOf(url) {
+  try { return new URL(url).pathname; } catch { return url; }
+}
+
 function getRow(url) {
   const f = freshMap[url] || { date:'', days:null, method:'' };
-  const t = ga4Map[url]   || { sessions:0, pageviews:0, users:0 };
+  const t = ga4Map[pathOf(url)] || { sessions:0, pageviews:0, users:0 };
   return { url, ...f, ...t };
 }
 
@@ -806,37 +612,40 @@ function pScore(r, med) {
 }
 
 function renderAll() {
-  const master = urlList.length>0 ? urlList : Array.from(new Set([...Object.keys(freshMap),...Object.keys(ga4Map)]));
-  const rows   = master.map(getRow);
+  const rows = urlList.map(getRow);
 
-  // Header
   document.getElementById('h-total').textContent  = rows.length;
   document.getElementById('run-time').textContent = 'Updated: '+new Date().toLocaleString('en-IN',{dateStyle:'short',timeStyle:'short'});
 
-  // Staleness
   const tot = rows.length;
   [7,30,90,120].forEach(d=>{
-    const n=rows.filter(r=>r.days!==null&&r.days>=d).length;
-    document.getElementById('sv'+d).textContent=n;
-    document.getElementById('sf'+d).style.width=tot?(n/tot*100)+'%':'0%';
+    const n = rows.filter(r=>r.days!==null && r.days>=d).length;
+    document.getElementById('sv'+d).textContent = n;
+    document.getElementById('sf'+d).style.width = tot?(n/tot*100)+'%':'0%';
   });
 
-  // Matrix (restore 4-quadrant)
-  const sv=rows.map(r=>r.sessions).sort((a,b)=>a-b);
-  const med=sv[Math.floor(sv.length/2)]||0;
-  
-  const actnow=rows.filter(r=>r.sessions>med&&(r.days===null||r.days>=90));
-  const protect=rows.filter(r=>r.sessions>med&&r.days!==null&&r.days<90);
-  const queue=rows.filter(r=>r.sessions<=med&&(r.days===null||r.days>=90));
-  const monitor=rows.filter(r=>r.sessions<=med&&r.days!==null&&r.days<90);
-  
-  document.getElementById('mq-a').textContent=actnow.length;
-  document.getElementById('mq-p').textContent=protect.length;
-  document.getElementById('mq-q').textContent=queue.length;
-  document.getElementById('mq-m').textContent=monitor.length;
+  const sv = rows.map(r=>r.sessions).sort((a,b)=>a-b);
+  const med = sv[Math.floor(sv.length/2)] || 0;
+
+  const actnow  = rows.filter(r=>r.sessions>med && (r.days===null || r.days>=90));
+  const protect = rows.filter(r=>r.sessions>med && r.days!==null && r.days<90);
+  const queue   = rows.filter(r=>r.sessions<=med && (r.days===null || r.days>=90));
+  const monitor = rows.filter(r=>r.sessions<=med && r.days!==null && r.days<90);
+
+  document.getElementById('mq-a').textContent = actnow.length;
+  document.getElementById('mq-p').textContent = protect.length;
+  document.getElementById('mq-q').textContent = queue.length;
+  document.getElementById('mq-m').textContent = monitor.length;
   peek('pk-a',actnow); peek('pk-p',protect); peek('pk-q',queue); peek('pk-m',monitor);
 
-  applySort(master);
+  if (Object.keys(ga4Map).length) {
+    document.getElementById('tv-s').textContent = fmt(rows.reduce((s,r)=>s+r.sessions,0));
+    document.getElementById('tv-p').textContent = fmt(rows.reduce((s,r)=>s+r.pageviews,0));
+    document.getElementById('tv-u').textContent = fmt(rows.reduce((s,r)=>s+(r.users||0),0));
+    document.getElementById('tv-z').textContent = rows.filter(r=>r.sessions===0).length;
+  }
+
+  applySort();
 }
 
 function peek(id,arr) {
@@ -846,10 +655,7 @@ function peek(id,arr) {
 }
 
 // ─── FILTER / SORT ───
-document.getElementById('srch').addEventListener('input', e=>{
-  curSearch=e.target.value.toLowerCase();
-  refreshTable();
-});
+document.getElementById('srch').addEventListener('input', e=>{ curSearch=e.target.value.toLowerCase(); refreshTable(); });
 document.getElementById('chips').addEventListener('click', e=>{
   if(!e.target.classList.contains('chip'))return;
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
@@ -868,15 +674,12 @@ window.setFilter = function(f) {
   document.querySelector('.tbl-card').scrollIntoView({behavior:'smooth',block:'start'});
 };
 
-function refreshTable() {
-  const master = urlList.length>0 ? urlList : Array.from(new Set([...Object.keys(freshMap),...Object.keys(ga4Map)]));
-  applySort(master);
-}
+function refreshTable() { applySort(); }
 
-function applySort(master) {
-  const sv=master.map(u=>(ga4Map[u]||{sessions:0}).sessions).sort((a,b)=>a-b);
-  const med=sv[Math.floor(sv.length/2)]||0;
-  let rows=master.map(getRow);
+function applySort() {
+  const sv = urlList.map(u=>getRow(u).sessions).sort((a,b)=>a-b);
+  const med = sv[Math.floor(sv.length/2)] || 0;
+  let rows = urlList.map(getRow);
 
   if(curSearch) rows=rows.filter(r=>r.url.toLowerCase().includes(curSearch));
   if(curFilter==='actnow')  rows=rows.filter(r=>r.sessions>med&&(r.days===null||r.days>=90));
@@ -912,7 +715,7 @@ function renderTable(rows, med) {
     tr.innerHTML=`
       <td class="td-n">${i+1}</td>
       <td class="td-url">
-        <a href="${r.url}" target="_blank" title="${r.url}">${new URL(r.url).hostname}</a>
+        <a href="${r.url}" target="_blank" title="${r.url}">${safeHost(r.url)}</a>
         <span class="td-path">${path}</span>
       </td>
       <td class="td-date">${r.date||'—'}</td>
@@ -926,8 +729,10 @@ function renderTable(rows, med) {
     `;
     tbody.appendChild(tr);
   });
-  document.getElementById('row-count').textContent=`${rows.length} of ${urlList.length||Object.keys(freshMap).length} URLs`;
+  document.getElementById('row-count').textContent=`${rows.length} of ${urlList.length} URLs`;
 }
+
+function safeHost(url){ try{ return new URL(url).hostname; }catch{ return url; } }
 
 function pillFor(d) {
   if(d===null) return{pill:'Unknown',     pc:'px'};
@@ -944,7 +749,7 @@ function fmt(n){
   return n.toLocaleString('en-IN');
 }
 
-// ─── HELPERS ───
+// ─── HELPERS ───x
 function markDone(n){
   const el=document.getElementById('sn'+n);
   el.textContent='✓';
