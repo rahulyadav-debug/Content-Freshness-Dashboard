@@ -536,7 +536,46 @@ async function extractDateFromURL(url) {
     }
     const html = await pageResp.text();
 
-    let match = html.match(/"datePublished"\s*:\s*"([^"]+)"/i);
+    // PRIORITY 1: Visible "Updated On" text on the page (e.g. "Updated On · August 20, 2026")
+    // This is what many CMS/blog templates show instead of exposing it via meta tags.
+    let match = html.match(/Updated\s*On\s*[·:\-]?\s*([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})/i);
+    if (match && match[1]) {
+      const dateStr = match[1].replace(',', '');
+      const date = new Date(dateStr);
+      if (!isNaN(date.getTime())) {
+        return { date: date.toISOString().substring(0,10), days:daysSince(date), method:'Visible "Updated On" text' };
+      }
+    }
+    // Also try "Last Updated" / "Updated:" variants
+    match = html.match(/Last\s*Updated\s*[·:\-]?\s*([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})/i);
+    if (match && match[1]) {
+      const dateStr = match[1].replace(',', '');
+      const date = new Date(dateStr);
+      if (!isNaN(date.getTime())) {
+        return { date: date.toISOString().substring(0,10), days:daysSince(date), method:'Visible "Last Updated" text' };
+      }
+    }
+
+    // PRIORITY 2: article:modified_time meta (explicit "modified" date, not published)
+    match = html.match(/<meta\s+property=["']article:modified_time["']\s+content=["']([^"']+)["']/i);
+    if (match && match[1]) {
+      const dateStr = match[1].substring(0,10);
+      const date = new Date(dateStr);
+      if (!isNaN(date.getTime())) {
+        return { date:dateStr, days:daysSince(date), method:'Meta: article:modified_time' };
+      }
+    }
+    match = html.match(/"dateModified"\s*:\s*"([^"]+)"/i);
+    if (match && match[1]) {
+      const dateStr = match[1].substring(0,10);
+      const date = new Date(dateStr);
+      if (!isNaN(date.getTime())) {
+        return { date:dateStr, days:daysSince(date), method:'JSON-LD dateModified' };
+      }
+    }
+
+    // Fallback to datePublished if nothing "modified/updated" was found
+    match = html.match(/"datePublished"\s*:\s*"([^"]+)"/i);
     if (match && match[1]) {
       const dateStr = match[1].substring(0,10);
       const date = new Date(dateStr);
@@ -749,7 +788,7 @@ function fmt(n){
   return n.toLocaleString('en-IN');
 }
 
-// ─── HELPERS ───x
+// ─── HELPERS ───
 function markDone(n){
   const el=document.getElementById('sn'+n);
   el.textContent='✓';
