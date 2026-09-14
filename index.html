@@ -303,38 +303,6 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
   <!-- ─── DASHBOARD ─── -->
   <div id="dash" class="dashboard-panel" style="display:none;">
 
-    <div class="slabel">Priority Matrix</div>
-    <div class="matrix-header">
-      <h3>Content Action Map</h3>
-      <p>High traffic + stale content = Act Now. Click any quadrant to filter the table.</p>
-    </div>
-    <div class="matrix">
-      <div class="mq act" onclick="setFilter('actnow')">
-        <div class="mq-tag">🔴 Act Now</div>
-        <div class="mq-n" id="mq-a">0</div>
-        <div class="mq-sub"><strong>High traffic · Stale 90+ days</strong><br>Highest SEO risk. Update immediately.</div>
-        <div class="mq-peek" id="pk-a"></div>
-      </div>
-      <div class="mq pro" onclick="setFilter('all')">
-        <div class="mq-tag">🟢 Protect</div>
-        <div class="mq-n" id="mq-p">0</div>
-        <div class="mq-sub"><strong>High traffic · Fresh content</strong><br>Performing well. Keep monitoring.</div>
-        <div class="mq-peek" id="pk-p"></div>
-      </div>
-      <div class="mq que" onclick="setFilter('90')">
-        <div class="mq-tag">🟡 Queue</div>
-        <div class="mq-n" id="mq-q">0</div>
-        <div class="mq-sub"><strong>Low traffic · Stale content</strong><br>Update after Act Now pages.</div>
-        <div class="mq-peek" id="pk-q"></div>
-      </div>
-      <div class="mq mon" onclick="setFilter('all')">
-        <div class="mq-tag">⚪ Monitor</div>
-        <div class="mq-n" id="mq-m">0</div>
-        <div class="mq-sub"><strong>Low traffic · Fresh content</strong><br>Fine for now. Check growth.</div>
-        <div class="mq-peek" id="pk-m"></div>
-      </div>
-    </div>
-
     <div class="slabel">Staleness Breakdown</div>
     <div class="statrow">
       <div class="sc s7">  <div class="sv" id="sv7">0</div>  <div class="sl">Stale 7+ days</div>  <div class="sp"><div class="sf" id="sf7"  style="width:0%"></div></div></div>
@@ -369,11 +337,11 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
           <span class="chip"     data-f="unknown">Unknown Date</span>
         </div>
         <select class="srt-sel" id="srt">
+          <option value="sess_d">Sessions: High → Low</option>
+          <option value="sess_a">Sessions: Low → High</option>
           <option value="priority">↓ Priority</option>
           <option value="days_d">↓ Most Stale</option>
           <option value="days_a">↑ Freshest</option>
-          <option value="sess_d">↓ Sessions</option>
-          <option value="sess_a">↑ Sessions</option>
         </select>
       </div>
       <div class="tbl-scroll">
@@ -381,7 +349,7 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
           <thead>
             <tr>
               <th>#</th><th>URL</th><th>Published</th><th>Age</th>
-              <th>Freshness</th><th>Priority</th><th>Sessions</th><th>Pageviews</th><th>Traffic</th><th>Method</th>
+              <th>Freshness</th><th>Priority</th><th>Sessions</th><th>Pageviews</th><th>60-Day Trend</th><th>Method</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
@@ -442,12 +410,14 @@ function startGoogleSignIn() {
   tokenClient.requestAccessToken();
 }
 
+const TREND_DAYS = 60; // sparkline window
+
 async function fetchGA4Data() {
   const propertyId = document.getElementById('propertyId').value.trim();
   if (!propertyId) { alert('Enter your GA4 Property ID.'); return; }
   if (!accessToken) { alert('Sign in with Google first.'); return; }
 
-  setStatus('ga4Status','loading',`Fetching last ${DAYS_BACK} days of sessions…`);
+  setStatus('ga4Status','loading',`Fetching last ${TREND_DAYS} days (daily) of sessions…`);
 
   try {
     const resp = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`, {
@@ -457,10 +427,11 @@ async function fetchGA4Data() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        dateRanges: [{ startDate: `${DAYS_BACK}daysAgo`, endDate: 'today' }],
-        dimensions: [{ name: 'pagePath' }],
+        dateRanges: [{ startDate: `${TREND_DAYS}daysAgo`, endDate: 'today' }],
+        dimensions: [{ name: 'date' }, { name: 'pagePath' }],
         metrics: [{ name: 'sessions' }, { name: 'screenPageViews' }, { name: 'totalUsers' }],
-        limit: 100000
+        limit: 250000,
+        orderBys: [{ dimension: { dimensionName: 'date' } }]
       })
     });
 
@@ -471,22 +442,67 @@ async function fetchGA4Data() {
     }
 
     const data = await resp.json();
-    ga4Map = {};
+
+    // Build full list of the last TREND_DAYS calendar dates (YYYYMMDD, GA4 format) so
+    // days with zero sessions still show up as 0 in the sparkline instead of being skipped.
+    const dateKeys = [];
+    for (let i = TREND_DAYS - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      dateKeys.push(d.toISOString().slice(0,10).replace(/-/g,''));
+    }
+
+    // path -> { daily: {dateKey: {sessions,pageviews,users}} }
+    const byPath = {};
     (data.rows || []).forEach(row => {
-      const path = row.dimensionValues[0].value;
-      ga4Map[path] = {
-        sessions:   parseInt(row.metricValues[0].value) || 0,
-        pageviews:  parseInt(row.metricValues[1].value) || 0,
-        users:      parseInt(row.metricValues[2].value) || 0
+      const dateKey = row.dimensionValues[0].value;
+      const path    = row.dimensionValues[1].value;
+      if (!byPath[path]) byPath[path] = {};
+      byPath[path][dateKey] = {
+        sessions:  parseInt(row.metricValues[0].value) || 0,
+        pageviews: parseInt(row.metricValues[1].value) || 0,
+        users:     parseInt(row.metricValues[2].value) || 0
       };
     });
 
-    setStatus('ga4Status','success', `✓ Pulled sessions for ${Object.keys(ga4Map).length} paths`);
+    ga4Map = {};
+    Object.keys(byPath).forEach(path => {
+      const daily = dateKeys.map(k => (byPath[path][k] || {sessions:0,pageviews:0,users:0}));
+      // Last 30 days = last 30 entries of the 60-day array, for the top summary + table totals
+      const last30 = daily.slice(-DAYS_BACK);
+      ga4Map[path] = {
+        sessions:  last30.reduce((s,d)=>s+d.sessions,0),
+        pageviews: last30.reduce((s,d)=>s+d.pageviews,0),
+        users:     last30.reduce((s,d)=>s+d.users,0),
+        dailySessions: daily.map(d=>d.sessions) // full 60-day series, for the sparkline
+      };
+    });
+
+    setStatus('ga4Status','success', `✓ Pulled ${TREND_DAYS}-day daily sessions for ${Object.keys(ga4Map).length} paths`);
     document.getElementById('tr-sec').style.display = 'block';
     tryRender();
   } catch (e) {
     setStatus('ga4Status','error', 'Request failed: ' + e.message);
   }
+}
+
+// Compact inline SVG sparkline for a 60-day daily-sessions series.
+function sparklineSVG(values) {
+  if (!values || !values.length) return '<span style="color:var(--subtle);font-size:11px;">No data</span>';
+  const w = 110, h = 28, pad = 2;
+  const max = Math.max(...values, 1);
+  const step = (w - pad*2) / (values.length - 1 || 1);
+  const pts = values.map((v,i) => {
+    const x = pad + i*step;
+    const y = h - pad - (v/max)*(h - pad*2);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  const first = values.slice(0, Math.ceil(values.length/2)).reduce((a,b)=>a+b,0);
+  const second = values.slice(Math.ceil(values.length/2)).reduce((a,b)=>a+b,0);
+  const trendColor = second > first ? 'var(--green)' : (second < first ? 'var(--red)' : 'var(--subtle)');
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block;">
+    <polyline points="${pts}" fill="none" stroke="${trendColor}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+  </svg>`;
 }
 
 // ─── URL UPLOAD → AUTO DATE EXTRACTION ───
@@ -640,7 +656,7 @@ function pathOf(url) {
 
 function getRow(url) {
   const f = freshMap[url] || { date:'', days:null, method:'' };
-  const t = ga4Map[pathOf(url)] || { sessions:0, pageviews:0, users:0 };
+  const t = ga4Map[pathOf(url)] || { sessions:0, pageviews:0, users:0, dailySessions:[] };
   return { url, ...f, ...t };
 }
 
@@ -663,20 +679,6 @@ function renderAll() {
     document.getElementById('sf'+d).style.width = tot?(n/tot*100)+'%':'0%';
   });
 
-  const sv = rows.map(r=>r.sessions).sort((a,b)=>a-b);
-  const med = sv[Math.floor(sv.length/2)] || 0;
-
-  const actnow  = rows.filter(r=>r.sessions>med && (r.days===null || r.days>=90));
-  const protect = rows.filter(r=>r.sessions>med && r.days!==null && r.days<90);
-  const queue   = rows.filter(r=>r.sessions<=med && (r.days===null || r.days>=90));
-  const monitor = rows.filter(r=>r.sessions<=med && r.days!==null && r.days<90);
-
-  document.getElementById('mq-a').textContent = actnow.length;
-  document.getElementById('mq-p').textContent = protect.length;
-  document.getElementById('mq-q').textContent = queue.length;
-  document.getElementById('mq-m').textContent = monitor.length;
-  peek('pk-a',actnow); peek('pk-p',protect); peek('pk-q',queue); peek('pk-m',monitor);
-
   if (Object.keys(ga4Map).length) {
     document.getElementById('tv-s').textContent = fmt(rows.reduce((s,r)=>s+r.sessions,0));
     document.getElementById('tv-p').textContent = fmt(rows.reduce((s,r)=>s+r.pageviews,0));
@@ -685,12 +687,6 @@ function renderAll() {
   }
 
   applySort();
-}
-
-function peek(id,arr) {
-  const el=document.getElementById(id);
-  if(!arr.length){el.textContent='';return;}
-  el.textContent=arr.slice(0,2).map(r=>'↗ '+(r.url.replace(/https?:\/\/(www\.)?/,'').split('/')[0])).join('\n');
 }
 
 // ─── FILTER / SORT ───
@@ -763,7 +759,7 @@ function renderTable(rows, med) {
       <td><span class="pbadge ${pri>=0.7?'ph':pri>=0.4?'pm':'pl'}">${pri}</span></td>
       <td class="td-r">${fmt(r.sessions)}</td>
       <td class="td-r">${fmt(r.pageviews)}</td>
-      <td><div class="bar-cell"><div class="bar-bg"><div class="bar-fg" style="width:${med>0?Math.min(r.sessions/(med*3)*100,100):0}%"></div></div></div></td>
+      <td>${sparklineSVG(r.dailySessions)}</td>
       <td class="td-mth">${r.method||'—'}</td>
     `;
     tbody.appendChild(tr);
