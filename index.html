@@ -167,8 +167,10 @@ tr:hover td{background:var(--s2);}
 
 .td-n{font-size:11px;color:var(--subtle);font-family:var(--fm);width:32px;}
 .td-url{max-width:280px;}
-.td-url a{display:block;font-family:var(--fm);font-size:11.5px;color:var(--ink);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;}
-.td-url a:hover{color:var(--blue);text-decoration:underline;}
+.td-url a{display:block;font-family:var(--fm);font-size:11.5px;color:var(--blue);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;}
+.td-url a:hover{text-decoration:underline;}
+.td-url a.td-path{font-size:10.5px;color:var(--subtle);}
+.td-url a.td-path:hover{color:var(--blue);text-decoration:underline;}
 .td-path{font-size:10.5px;color:var(--subtle);font-family:var(--fm);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .td-date{font-family:var(--fm);font-size:12px;color:var(--muted);white-space:nowrap;}
 .td-r{text-align:right;font-family:var(--fm);font-size:13px;font-weight:500;}
@@ -312,7 +314,14 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
     </div>
 
     <div id="tr-sec" style="display:none;">
-      <div class="slabel">GA4 Traffic — Last 30 Days</div>
+      <div class="slabel" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>GA4 Traffic &amp; Trend — <span id="tw-label">Last 90 Days</span></span>
+        <div class="chips" id="tw-toggle">
+          <span class="chip"    data-w="30">30 Days</span>
+          <span class="chip"    data-w="60">60 Days</span>
+          <span class="chip on" data-w="90">90 Days</span>
+        </div>
+      </div>
       <div class="statrow">
         <div class="sc tstat"><div class="sv" id="tv-s">0</div><div class="sl">Total Sessions</div></div>
         <div class="sc tstat"><div class="sv" id="tv-p">0</div><div class="sl">Total Pageviews</div></div>
@@ -321,7 +330,10 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
       </div>
     </div>
 
-    <div class="slabel">All URLs</div>
+    <div class="slabel" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>All URLs</span>
+      <button class="btn btn-green" id="btn-export" onclick="exportCSV()">📥 Export CSV</button>
+    </div>
     <div class="tbl-card">
       <div class="tbl-bar">
         <div class="srch">
@@ -348,8 +360,8 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
         <table>
           <thead>
             <tr>
-              <th>#</th><th>URL</th><th>Published</th><th>Age</th>
-              <th>Freshness</th><th>Priority</th><th>Sessions</th><th>Pageviews</th><th>60-Day Trend</th><th>Method</th>
+              <th>#</th><th>URL</th><th>Updated On</th><th>Age</th>
+              <th>Freshness</th><th>Priority</th><th>Sessions</th><th>Pageviews</th><th id="th-trend">90-Day Trend</th><th>Method</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
@@ -378,11 +390,22 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
 let accessToken = null;
 let urlList  = [];
 let freshMap = {};
-let ga4Map   = {};
-const DAYS_BACK = 30; // last 30 days, per spec
+let ga4Map   = {};       // path -> { dailySessions[], dailyPageviews[], dailyUsers[] } — full 90-day series
+let trendWindow = 90;    // 30 | 60 | 90 — how many of those days are currently shown/summed
 let curFilter = 'all';
 let curSearch = '';
 let tokenClient = null;
+let lastRenderedRows = []; // kept in sync for CSV export
+
+document.getElementById('tw-toggle').addEventListener('click', e=>{
+  if(!e.target.classList.contains('chip')) return;
+  document.querySelectorAll('#tw-toggle .chip').forEach(c=>c.classList.remove('on'));
+  e.target.classList.add('on');
+  trendWindow = parseInt(e.target.dataset.w);
+  document.getElementById('tw-label').textContent = `Last ${trendWindow} Days`;
+  document.getElementById('th-trend').textContent = `${trendWindow}-Day Trend`;
+  tryRender();
+});
 
 // ─── GOOGLE SIGN-IN (GA4 OAuth) ───
 function startGoogleSignIn() {
@@ -410,14 +433,14 @@ function startGoogleSignIn() {
   tokenClient.requestAccessToken();
 }
 
-const TREND_DAYS = 60; // sparkline window
+const MAX_TREND_DAYS = 90; // always fetch the largest window; 30/60/90 toggle just slices this locally
 
 async function fetchGA4Data() {
   const propertyId = document.getElementById('propertyId').value.trim();
   if (!propertyId) { alert('Enter your GA4 Property ID.'); return; }
   if (!accessToken) { alert('Sign in with Google first.'); return; }
 
-  setStatus('ga4Status','loading',`Fetching last ${TREND_DAYS} days (daily) of sessions…`);
+  setStatus('ga4Status','loading',`Fetching last ${MAX_TREND_DAYS} days (daily) of sessions…`);
 
   try {
     const resp = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`, {
@@ -427,7 +450,7 @@ async function fetchGA4Data() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        dateRanges: [{ startDate: `${TREND_DAYS}daysAgo`, endDate: 'today' }],
+        dateRanges: [{ startDate: `${MAX_TREND_DAYS}daysAgo`, endDate: 'today' }],
         dimensions: [{ name: 'date' }, { name: 'pagePath' }],
         metrics: [{ name: 'sessions' }, { name: 'screenPageViews' }, { name: 'totalUsers' }],
         limit: 250000,
@@ -443,16 +466,15 @@ async function fetchGA4Data() {
 
     const data = await resp.json();
 
-    // Build full list of the last TREND_DAYS calendar dates (YYYYMMDD, GA4 format) so
-    // days with zero sessions still show up as 0 in the sparkline instead of being skipped.
+    // Build full list of the last MAX_TREND_DAYS calendar dates (YYYYMMDD, GA4 format) so
+    // days with zero sessions still show up as 0 instead of being skipped.
     const dateKeys = [];
-    for (let i = TREND_DAYS - 1; i >= 0; i--) {
+    for (let i = MAX_TREND_DAYS - 1; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       dateKeys.push(d.toISOString().slice(0,10).replace(/-/g,''));
     }
 
-    // path -> { daily: {dateKey: {sessions,pageviews,users}} }
     const byPath = {};
     (data.rows || []).forEach(row => {
       const dateKey = row.dimensionValues[0].value;
@@ -468,17 +490,15 @@ async function fetchGA4Data() {
     ga4Map = {};
     Object.keys(byPath).forEach(path => {
       const daily = dateKeys.map(k => (byPath[path][k] || {sessions:0,pageviews:0,users:0}));
-      // Last 30 days = last 30 entries of the 60-day array, for the top summary + table totals
-      const last30 = daily.slice(-DAYS_BACK);
+      // Store the FULL 90-day series per metric — 30/60/90 toggle slices this client-side, no refetch needed
       ga4Map[path] = {
-        sessions:  last30.reduce((s,d)=>s+d.sessions,0),
-        pageviews: last30.reduce((s,d)=>s+d.pageviews,0),
-        users:     last30.reduce((s,d)=>s+d.users,0),
-        dailySessions: daily.map(d=>d.sessions) // full 60-day series, for the sparkline
+        dailySessions:  daily.map(d=>d.sessions),
+        dailyPageviews: daily.map(d=>d.pageviews),
+        dailyUsers:     daily.map(d=>d.users)
       };
     });
 
-    setStatus('ga4Status','success', `✓ Pulled ${TREND_DAYS}-day daily sessions for ${Object.keys(ga4Map).length} paths`);
+    setStatus('ga4Status','success', `✓ Pulled ${MAX_TREND_DAYS}-day daily sessions for ${Object.keys(ga4Map).length} paths`);
     document.getElementById('tr-sec').style.display = 'block';
     tryRender();
   } catch (e) {
@@ -486,7 +506,7 @@ async function fetchGA4Data() {
   }
 }
 
-// Compact inline SVG sparkline for a 60-day daily-sessions series.
+// Compact inline SVG sparkline for a daily-sessions series (length = current trendWindow).
 function sparklineSVG(values) {
   if (!values || !values.length) return '<span style="color:var(--subtle);font-size:11px;">No data</span>';
   const w = 110, h = 28, pad = 2;
@@ -656,18 +676,46 @@ function pathOf(url) {
 
 function getRow(url) {
   const f = freshMap[url] || { date:'', days:null, method:'' };
-  const t = ga4Map[pathOf(url)] || { sessions:0, pageviews:0, users:0, dailySessions:[] };
-  return { url, ...f, ...t };
+  const g = ga4Map[pathOf(url)] || { dailySessions:[], dailyPageviews:[], dailyUsers:[] };
+  const dailySessions  = g.dailySessions.slice(-trendWindow);
+  const dailyPageviews = g.dailyPageviews.slice(-trendWindow);
+  const dailyUsers     = g.dailyUsers.slice(-trendWindow);
+  return {
+    url, ...f,
+    dailySessions,
+    sessions:  dailySessions.reduce((a,b)=>a+b,0),
+    pageviews: dailyPageviews.reduce((a,b)=>a+b,0),
+    users:     dailyUsers.reduce((a,b)=>a+b,0),
+    trend:     trendDirection(dailySessions) // {declinePct, direction: 'up'|'down'|'flat'}
+  };
 }
 
+// How much recent traffic has dropped: compares the first half of the window vs the second half.
+// Returns a 0–1 "decline severity" (0 = flat/growing, 1 = fell to zero) plus the raw direction.
+function trendDirection(daily) {
+  if (!daily || daily.length < 2) return { declinePct: 0, direction: 'flat' };
+  const mid = Math.ceil(daily.length/2);
+  const firstAvg  = daily.slice(0, mid).reduce((a,b)=>a+b,0) / mid;
+  const secondAvg = daily.slice(mid).reduce((a,b)=>a+b,0) / (daily.length-mid);
+  if (firstAvg === 0) return { declinePct: 0, direction: secondAvg>0 ? 'up' : 'flat' };
+  const pctChange = (secondAvg - firstAvg) / firstAvg; // negative = declining
+  return {
+    declinePct: pctChange < 0 ? Math.min(-pctChange, 1) : 0,
+    direction: pctChange < -0.05 ? 'down' : (pctChange > 0.05 ? 'up' : 'flat')
+  };
+}
+
+// Priority = pages with meaningfully high traffic whose trend is dropping get flagged first.
+// A high-traffic page holding steady or growing scores low; a high-traffic page in decline scores high.
 function pScore(r, med) {
-  const stale = r.days!==null ? Math.min(r.days/365,1) : 0.5;
-  const traf  = med>0 ? Math.min(r.sessions/(med*2),1) : 0;
-  return stale*.6 + traf*.4;
+  const trafficWeight = med>0 ? Math.min(r.sessions/(med*2), 1) : 0;
+  const declineWeight = r.trend ? r.trend.declinePct : 0;
+  return trafficWeight * declineWeight * 1.5 > 1 ? 1 : trafficWeight * declineWeight * 1.5; // reward the combination, not either alone
 }
 
 function renderAll() {
   const rows = urlList.map(getRow);
+  lastRenderedRows = rows;
 
   document.getElementById('h-total').textContent  = rows.length;
   document.getElementById('run-time').textContent = 'Updated: '+new Date().toLocaleString('en-IN',{dateStyle:'short',timeStyle:'short'});
@@ -736,6 +784,7 @@ function applySort() {
 }
 
 function renderTable(rows, med) {
+  lastRenderedRows = rows; // keep in sync for CSV export — reflects current filter/sort/search
   const tbody=document.getElementById('tbody');
   tbody.innerHTML='';
   if(!rows.length){
@@ -750,8 +799,8 @@ function renderTable(rows, med) {
     tr.innerHTML=`
       <td class="td-n">${i+1}</td>
       <td class="td-url">
-        <a href="${r.url}" target="_blank" title="${r.url}">${safeHost(r.url)}</a>
-        <span class="td-path">${path}</span>
+        <a href="${r.url}" target="_blank" rel="noopener" title="${r.url}">${safeHost(r.url)}</a>
+        <a href="${r.url}" target="_blank" rel="noopener" class="td-path" title="${r.url}">${path}</a>
       </td>
       <td class="td-date">${r.date||'—'}</td>
       <td class="td-r">${r.days!==null?r.days+'d':'—'}</td>
@@ -782,6 +831,30 @@ function fmt(n){
   if(n>=1e6)return(n/1e6).toFixed(1)+'M';
   if(n>=1e3)return(n/1e3).toFixed(1)+'K';
   return n.toLocaleString('en-IN');
+}
+
+// ─── CSV EXPORT ───
+function exportCSV() {
+  if (!lastRenderedRows.length) { alert('No data to export yet — upload a URL list first.'); return; }
+  const headers = ['url','updated_on','age_days','sessions','pageviews','priority','method',`trend_window_days`];
+  const escape = v => `"${String(v??'').replace(/"/g,'""')}"`;
+  const lines = [headers.join(',')];
+  const sv = lastRenderedRows.map(r=>r.sessions).sort((a,b)=>a-b);
+  const med = sv[Math.floor(sv.length/2)] || 0;
+  lastRenderedRows.forEach(r=>{
+    lines.push([
+      escape(r.url), escape(r.date||''), escape(r.days??''),
+      escape(r.sessions), escape(r.pageviews), escape(pScore(r,med).toFixed(2)),
+      escape(r.method||''), escape(trendWindow)
+    ].join(','));
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `content-intelligence-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ─── HELPERS ───
