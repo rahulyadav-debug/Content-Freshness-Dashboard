@@ -361,7 +361,7 @@ footer{text-align:center;padding:24px;color:var(--subtle);font-size:11px;font-fa
           <thead>
             <tr>
               <th>#</th><th>URL</th><th>Updated On</th><th>Age</th>
-              <th>Freshness</th><th>Priority</th><th>Sessions</th><th>Pageviews</th><th id="th-trend">90-Day Trend</th><th>Method</th>
+              <th>Freshness</th><th>Priority</th><th>Sessions</th><th id="th-trend">90-Day Trend</th><th>Method</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
@@ -788,7 +788,7 @@ function renderTable(rows, med) {
   const tbody=document.getElementById('tbody');
   tbody.innerHTML='';
   if(!rows.length){
-    tbody.innerHTML=`<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--subtle);font-family:var(--fm);">No URLs match this filter.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--subtle);font-family:var(--fm);">No URLs match this filter.</td></tr>`;
     document.getElementById('row-count').textContent='0 rows'; return;
   }
   rows.forEach((r,i)=>{
@@ -807,7 +807,6 @@ function renderTable(rows, med) {
       <td><span class="pill ${pc}">${pill}</span></td>
       <td><span class="pbadge ${pri>=0.7?'ph':pri>=0.4?'pm':'pl'}">${pri}</span></td>
       <td class="td-r">${fmt(r.sessions)}</td>
-      <td class="td-r">${fmt(r.pageviews)}</td>
       <td>${sparklineSVG(r.dailySessions)}</td>
       <td class="td-mth">${r.method||'—'}</td>
     `;
